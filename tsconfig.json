@@ -1,0 +1,65 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "allowJs": true,
+    "alwaysStrict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "lib": [
+      "dom",
+      "es2017"
+    ],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "target": "esnext",
+    "paths": {
+      "@component/*": [
+        "components/*"
+      ],
+      "@data/*": [
+        "data/*"
+      ],
+      "@context/*": [
+        "contexts/*"
+      ],
+      "@hook/*": [
+        "hooks/*"
+      ],
+      "@utils/*": [
+        "utils/*"
+      ],
+      "@reducer/*": [
+        "reducers/*"
+      ],
+      "@auth/*": [
+        "auth/*"
+      ],
+      "@redux/*": [
+        "redux/*"
+      ]
+      ,
+      "@lib/*": [
+        "lib/*"
+      ]
+    },
+    "incremental": true
+  },
+  "exclude": [
+    "node_modules",
+    "**/redux/Store.ts"
+  ],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "next.config.js"
+  ]
+}
