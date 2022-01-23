@@ -22,8 +22,8 @@ const GrocerySection6: React.FC = () => {
           arrowButtonColor="inherit"
           showArrowOnHover={true}
         >
-          {cardList.map((item) => (
-            <Box p="0.25rem">
+          {cardList.map((item,key) => (
+            <Box p="0.25rem" key={key}>
               <Card className="carousel-card" bg={item.bgColor}>
                 <FlexBox alignItems="center" flexWrap="wrap">
                   <Box flex="1 1 0">

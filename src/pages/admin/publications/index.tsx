@@ -19,6 +19,7 @@ import {
 } from 'redux/actions/publication'
 import { useRouter } from "next/router";
 import DeleteModel from "@component/modal/DeleteModel";
+import { ToastContainer } from "react-toastify";
 const limit =10
 
 const PublicationsList = () => {
@@ -166,6 +167,7 @@ const PublicationsList = () => {
             }} />
           </FlexBox>
       </>:<div className="text-center"> <H4>No publications found</H4></div>}
+      <ToastContainer autoClose={2000} />
       <DeleteModel open={open} onYes={handleDelete} onNo={toggleDialog} onClose={toggleDialog}
       message="after deleting this publication you won't see it again "/>
      

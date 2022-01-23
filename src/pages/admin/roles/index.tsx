@@ -19,6 +19,7 @@ import {
 } from 'redux/actions/role'
 import { useRouter } from "next/router";
 import DeleteModel from "@component/modal/DeleteModel";
+import { ToastContainer } from "react-toastify";
 const limit =10
 const RolesList = () => {
    
@@ -121,7 +122,7 @@ const toggleDialog = useCallback(() => {
 
             <Hidden flex="0 0 0 !important" down={769}>
             <Typography className="pre" textAlign="center" color="text.muted">
-            <Link href={`/admin/roles/edit/${item._id}`}>
+            {/* <Link href={`/admin/roles/edit/${item._id}`}>
               <Typography
                 as="a"
                 href={`/admin/roles/edit/${item._id}`}
@@ -133,8 +134,8 @@ const toggleDialog = useCallback(() => {
                   </Icon>
                 </IconButton>
               </Typography>
-            </Link>
-            <IconButton size="small"
+            </Link> */}
+            {/* <IconButton size="small"
              onClick={() => {
               setId(item._id)
               toggleDialog()
@@ -148,7 +149,7 @@ const toggleDialog = useCallback(() => {
               <Icon variant="small" defaultcolor="currentColor">
               arrow-right
               </Icon>
-            </IconButton>
+            </IconButton> */}
           </Typography>
             </Hidden>
           </TableRow>
@@ -166,6 +167,7 @@ const toggleDialog = useCallback(() => {
             }} />
           </FlexBox>
       </> :<div className="text-center"> <H4>No role found</H4></div>}
+      <ToastContainer autoClose={2000} />
       <DeleteModel open={open} onYes={handleDelete} onNo={toggleDialog} onClose={toggleDialog}
       message="after deleting role you wont see it again "/>
       

@@ -24,7 +24,7 @@ const FashionCard2: React.FC<FashionCard2Props> = () => {
               <Grid item sm={6} xs={12}>
                 <Box p="1.5rem">
                   <Typography color="text.muted" mb="0.5rem">
-                    WOMEN'S HANDBAG
+                    WOMENS HANDBAG
                   </Typography>
 
                   <H3 mb="0.5rem" fontSize="30px" lineHeight="1.3">

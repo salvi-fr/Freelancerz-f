@@ -1,4 +1,5 @@
 import axios from "lib/http/client";
+import {  toast } from 'react-toastify';
 
 import {
     CREATE_LECTURE_SUCCESS,
@@ -39,10 +40,14 @@ export const getLecture = (id:string) => (dispatch) => {
     axios.get<IResponse>(`/api/lecture/${id}`).then((res) => {
         dispatch({
             type: GET_LECTURE_SUCCESS,
-            payload: {lecture:res.data},
+            payload: {lecture:res.data.data},
         })
     }).catch(function (error) {
-        console.log(error);
+            console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: GET_LECTURE_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }
@@ -65,7 +70,11 @@ export const createLecture= (data:ILectureCreate) => (dispatch) => {
             payload: {lecture:res.data},
         })
     }).catch(function (error) {
-        console.log(error);
+            console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: CREATE_LECTURE_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }
@@ -78,7 +87,11 @@ export const updateLecture = (id:string,data:ILectureUpdate) => (dispatch) => {
             payload: {lecture:res.data},
         })
     }).catch(function (error) {
-        console.log(error);
+            console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: UPDATE_LECTURE_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }
@@ -92,7 +105,11 @@ export const deleteLecture = (id:string) => (dispatch) => {
             payload: res.data,
         })
     }).catch(function (error) {
-        console.log(error);
+            console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: DELETE_LECTURE_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }

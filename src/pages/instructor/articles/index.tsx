@@ -18,6 +18,7 @@ import { useSelector } from 'utils/utils'
 import {
   getArticles, deleteArticle
 } from 'redux/actions/article'
+import { ToastContainer } from "react-toastify";
 import { useRouter } from "next/router";
 import DeleteModel from "@component/modal/DeleteModel";
 const limit = 10
@@ -169,6 +170,7 @@ const ArticlesList = () => {
             }} />
           </FlexBox>
         </> : <div className="text-center"> <H4>No articles found</H4></div>}
+        <ToastContainer autoClose={2000} />
       <DeleteModel open={open} onYes={handleDelete} onNo={toggleDialog} onClose={toggleDialog}
         message="after deleting this article you wont see it again " />
 

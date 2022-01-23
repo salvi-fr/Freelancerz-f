@@ -30,8 +30,8 @@ const GrocerySidenav: React.FC<GrocerySidenavProps> = ({ isFixed }) => {
         </Fragment>
       ));
     else
-      return childList.map((item) => (
-        <NavLink href={item.href} color="gray.700">
+      return childList.map((item,ind) => (
+        <NavLink href={item.href} color="gray.700" key={ind}>
           <FlexBox key={item.title}>
             <SemiSpan ml="3rem" py="6px" color="inherit" flex="1 1 0">
               {item.title}

@@ -9,7 +9,7 @@ import { Formik } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useDispatch } from 'react-redux'
-import {useSelector} from 'utils/utils'
+import {uploadImageFirebase, useSelector} from 'utils/utils'
 import React, { useState,useRef,useEffect } from "react";
 import * as yup from "yup";
 
@@ -28,6 +28,7 @@ import {
 import Spinner from "@component/Spinner";
 import { ICategory, IModule } from "types";
 import TextArea from "@component/textarea/TextArea";
+import { toast } from "react-toastify";
 
 const EditCourse = () => {
     const router = useRouter();
@@ -37,70 +38,76 @@ const EditCourse = () => {
   } = useRouter();
   const {error:courseError=null}= useSelector((state) => state.course)
   const {course:fechedCourse=null}= useSelector((state) => state.course)
-  const {updateCourseloading=false}= useSelector((state) => state.course)
   const { modules:mModules=null}= useSelector((state) => state.module)
   const { categories=null}= useSelector((state) => state.category)
-  const {error:categoryError=null}= useSelector((state) => state.category)
-  const {error:moduleError=null}= useSelector((state) => state.module)
-  const {updateCourseSuccess=false}= useSelector((state) => state.course)
-  const {getCourseSuccess=false}= useSelector((state) => state.course)
   const [courseMock, setCourseMock]=useState(null)
-  const [loading , setLoading]= useState(true)
  const [categoriesData,setCategoriesData]= useState([])
  const [modulesData,setModulesData]= useState([])
 const [file,setFile]=useState(null)
   const firstUpdate = useRef(true);
-  const [foundError,setFoundError]= useState(null)
   const [curriculum, setCurriculum] = useState(
     null
 )
+const { updateCourseSuccess=false,  updateCourseFailed=false}= useSelector((state) => state.course)
+const [loading , setLoading]= useState(false)
+useEffect(() => {
+  if( updateCourseFailed && loading){
+    toast.error(courseError, {
+      icon: "😨"
+    });
+    setLoading(false)  
+    router.reload()
+  }
+}, [ updateCourseFailed])
+useEffect(() => {
+if( updateCourseSuccess && loading){
+  toast.success("successfully updated", {
+    icon: "🚀",
+    position: "top-right",
+autoClose: 5000
+  });
+  setLoading(false)
+  if(router.query.redirect){
+    
+    router.push(`/${router.query.redirect}`);
+  }else{
+    router.push("/admin/courses");
+  } 
+}
+}, [ updateCourseSuccess,loading])
 
   useEffect(() => {
-setLoading(true)
     dispatch(getCategories())
+    dispatch(getModules())
+    dispatch(getCourse(id as string ))
     firstUpdate.current = false
   }, [dispatch])
 
 
-  useEffect(() => {
-    if(courseError && !firstUpdate.current){
-        setFoundError(courseError)
-      }
-  }, [courseError])
-
 
   useEffect(() => {
-    if(categoryError && !firstUpdate.current){
-        setFoundError(categoryError)
-      }
-    else if (categories && categories.data) {
+    if (categories && categories.data) {
         setCategoriesData([])
         categories.data.map((item) => {
         setCategoriesData((prevState) => [...prevState, { value: item._id, label: item.title }]);
         })
         
     }
-    dispatch(getModules())
+   
   }, [categories])
 
 
   useEffect(() => {
-    if(moduleError && !firstUpdate.current){
-        setFoundError(moduleError)
-      }
-    else if (mModules && mModules.data) {
+   if (mModules && mModules.data) {
         setModulesData([])
         mModules.data.map((item) => {
         setModulesData((prevState) => [...prevState, { value: item._id, label: item.title }]);
-        })
-        
-    }
-    dispatch(getCourse(id as string ))
+        }) 
+    } 
   }, [mModules])
 
 
   useEffect(() => {
-    
     if(fechedCourse){
       let cC = fechedCourse.category? fechedCourse.category as ICategory: null
       let cM = fechedCourse.modules?fechedCourse.modules as IModule[]:[] 
@@ -112,25 +119,22 @@ setLoading(true)
              return anotherOne_el._id as string == array_el.value;
           }).length == 0
        }):[],
-        category:cC? {value: cC._id, label: cC.title }:null,
+       course_category:cC? {value: cC._id, label: cC.title }:null,
         
       })
-      setLoading(false)
       setCurriculum(fechedCourse.curriculum)
       }
-  }, [fechedCourse])
-useEffect(() => {
-  if(updateCourseSuccess && !loading){
-    if(router.query.redirect){
-      router.push(`/${router.query.redirect}`);
-    }else{
-      // router.push("/admin/courses");
-    }
-    
-  }
-}, [updateCourseSuccess])
+  }, [fechedCourse,mModules,categories])
+
+
   const handleFormSubmit = async (values) => {
+    setLoading(true)
     try {
+      if(file){
+
+        const avatarUrl= await uploadImageFirebase(file,`Course`)
+          values.avatar=avatarUrl
+        }
       values.modules=values.course_modules.map((item)=>{return item.value})
       values.category=values.category.value
      let {_id,created_by,createdAt,course_modules,course_category,updatedAt, ...rest}=values
@@ -139,8 +143,8 @@ useEffect(() => {
    console.log(rest)
       await dispatch(updateCourse(id as string,rest))
     } catch (e) {
+      setLoading(false)
       console.log("got error", e)
-        setFoundError(e.message)
         
     }
   };
@@ -162,7 +166,7 @@ useEffect(() => {
         }
       />
       <Card1>
-      {!courseMock || loading? <p>Loading</p>:
+      {!courseMock? <p>Loading</p>:
       <>
       <RichTextEditor
                 content={curriculum}
@@ -268,8 +272,8 @@ useEffect(() => {
                 </Grid>
               </Box>
 
-              <Button type="submit" variant="contained" color="primary" disabled={!curriculum || updateCourseloading }>
-              {updateCourseloading && <Spinner  />}
+              <Button type="submit" variant="contained" color="primary" disabled={!curriculum || loading }>
+              {loading && <Spinner  />}
                 Update Course
               </Button>
             </form>

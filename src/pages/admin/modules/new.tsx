@@ -19,7 +19,7 @@ import MultipleSelect from '@component/multipleSelect';
   import {
     getLectures
   } from 'redux/actions/lecture'
-  import DropZone from "@component/DropZone";
+  import { ToastContainer } from "react-toastify";
 import TextArea from "@component/textarea/TextArea";
 
 const NewModule = () => {
@@ -159,7 +159,8 @@ const NewModule = () => {
             </form>
           )}
         </Formik>
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

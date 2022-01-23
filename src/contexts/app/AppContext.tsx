@@ -8,7 +8,6 @@ import {
 import {setSession,isValidToken} from '@utils/utils';
 import axios from '@lib/http/client'
 import {IUserLogin, IUserCreate} from 'types'
-import { useRouter } from 'next/router';
 
 const AppContext = createContext(null);
 
@@ -85,10 +84,12 @@ export const AppProvider: React.FC = ({ children }) => {
       });
   }
   const logout = () => {
-    const router = useRouter();
     setSession(null, null)
     dispatch({ type: 'LOGOUT' })
-    router.push("/login")
+    if (typeof window !== "undefined") {
+      
+        window.location.href = "/login";
+      }
   }
 
   useEffect(() => {

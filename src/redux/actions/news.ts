@@ -1,4 +1,5 @@
 import axios from "lib/http/client";
+import {  toast } from 'react-toastify';
 
 import {
     CREATE_NEWS_SUCCESS,
@@ -42,7 +43,11 @@ export const getNews = (id:string) => (dispatch) => {
             payload: {news:res.data},
         })
     }).catch(function (error) {
-        console.log(error);
+          console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: GET_NEWS_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }
@@ -56,7 +61,11 @@ export const createNews= (data:INewsCreate) => (dispatch) => {
             payload: {news:res.data},
         })
     }).catch(function (error) {
-        console.log(error);
+          console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: CREATE_NEWS_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }
@@ -69,7 +78,11 @@ export const updateNews = (id:string,data:INewsUpdate) => (dispatch) => {
             payload: {news:res.data},
         })
     }).catch(function (error) {
-        console.log(error);
+          console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: UPDATE_NEWS_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }
@@ -83,7 +96,11 @@ export const deleteNews = (id:string) => (dispatch) => {
             payload: res.data,
         })
     }).catch(function (error) {
-        console.log(error);
+          console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: DELETE_NEWS_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }

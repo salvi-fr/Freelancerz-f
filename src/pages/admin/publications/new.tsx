@@ -19,7 +19,7 @@ import Spinner from "@component/Spinner";
     createPublication
   } from 'redux/actions/publication'
   import RichTextEditor from '@component/RichTextEditor/RichTextEditor'
-  import DropZone from "@component/DropZone";
+  import { toast, ToastContainer } from "react-toastify";
 import TextArea from "@component/textarea/TextArea";
 
 const NewPublication = () => {
@@ -27,32 +27,37 @@ const NewPublication = () => {
   const dispatch = useDispatch()
   const [avatarFile,setAvatarFile]=useState(null)
   const [pdfFile,setPdfFile]=useState(null)
-  const {error:publicationError=null}= useSelector((state) => state.publication)
-  const {createPublicationSuccess=false}= useSelector((state) => state.publication)
-  const {createPublicationloading=false}= useSelector((state) => state.publication)
  const [content, setContent] = useState(null)
-
-  const firstUpdate = useRef(true);
-  const [foundError,setFoundError]= useState(null)
-  console.log(foundError)
-  useEffect(() => {
-    if(publicationError && !firstUpdate.current){
-        setFoundError(publicationError)
-      }
-  }, [publicationError])
+  const { createPublicationSuccess=false,error:publicationError=null,  createPublicationFailed=false}= useSelector((state) => state.publication)
+const [loading , setLoading]= useState(false)
 useEffect(() => {
-  if(createPublicationSuccess){
-    if(router.query.redirect){
-      router.push(`/${router.query.redirect}`);
-    }else{
-      router.push("/admin/publications");
-    }
-    
+  if( createPublicationFailed && loading){
+    toast.error(publicationError, {
+      icon: "😨"
+    });
+    setLoading(false)  
+    router.reload()
   }
-}, [createPublicationSuccess])
+}, [ createPublicationFailed])
+useEffect(() => {
+if( createPublicationSuccess && loading){
+  toast.success("successfully updated", {
+    icon: "🚀",
+    position: "top-right",
+autoClose: 5000
+  });
+  setLoading(false)
+  if(router.query.redirect){
+    
+    router.push(`/${router.query.redirect}`);
+  }else{
+    router.push("/admin/publications");
+  } 
+}
+}, [ createPublicationSuccess,loading])
 
   const handleFormSubmit = async (values) => {
-    console.log("before submitting")
+    setLoading(true)
     if(avatarFile){
       const avatarUrl= await uploadImageFirebase(avatarFile,`Publications`)
         values.avatar=avatarUrl
@@ -65,14 +70,11 @@ useEffect(() => {
      
       await dispatch(createPublication({...values,content}))
     } catch (e) {
+      setLoading(false)
       console.log("got error", e)
-        setFoundError(e.message)
         
     }
   };
-  // const {
-  //   query: { id },
-  // } = useRouter();
 
 
   return (
@@ -178,14 +180,15 @@ useEffect(() => {
                 </Grid>
               </Box>
 
-              <Button type="submit" variant="contained" color="primary" disabled={!content || createPublicationloading}>
-              {createPublicationloading && <Spinner  />}
+              <Button type="submit" variant="contained" color="primary" disabled={!content || loading}>
+              {loading && <Spinner  />}
                 Create Publication 
               </Button>
             </form>
           )}
         </Formik>
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

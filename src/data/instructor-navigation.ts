@@ -154,44 +154,44 @@ export const navbarNavigations = [
     },
     {
       href: "/instructor/courses",
-      title: "Courses",
+      title: "Your Courses",
       iconName: "box",
     },
     {
       href: "/instructor/modules",
-      title: "Modules",
+      title: "Your Modules",
       iconName: "box",
     },
     {
       href: "/instructor/lectures",
-      title: "Lectures",
+      title: "Your Lectures",
       iconName: "upload",
     },
     {
       href: "/instructor/quizzes",
-      title: "Quizzes",
+      title: "Your Quizzes",
       iconName: "upload",
     },
-    {
-      href: "/instructor/articles",
-      title: "Articles",
-      iconName: "upload",
-    },
-    {
-      href: "/instructor/reports",
-      title: "Reports",
-      iconName: "upload",
-    },
-    {
-      href: "/instructor/events",
-      title: "Events",
-      iconName: "upload",
-    },
-    {
-      href: "/instructor/trainings",
-      title: "Trainings",
-      iconName: "upload",
-    },
+    // {
+    //   href: "/instructor/articles",
+    //   title: "Articles",
+    //   iconName: "upload",
+    // },
+    // {
+    //   href: "/instructor/reports",
+    //   title: "Reports",
+    //   iconName: "upload",
+    // },
+    // {
+    //   href: "/instructor/events",
+    //   title: "Your Events",
+    //   iconName: "upload",
+    // },
+    // {
+    //   href: "/instructor/trainings",
+    //   title: "Your Trainings",
+    //   iconName: "upload",
+    // },
     {
       href: "/instructor/account-settings",
       title: "Account Settings",

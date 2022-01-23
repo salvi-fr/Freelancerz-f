@@ -20,6 +20,7 @@ import {
 } from 'redux/actions/event'
 import { useRouter } from "next/router";
 import DeleteModel from "@component/modal/DeleteModel";
+import { ToastContainer } from "react-toastify";
 const limit = 10
 const EventsList = () => {
      
@@ -172,6 +173,7 @@ const EventsList = () => {
             }} />
           </FlexBox>
       </>:<div className="text-center"> <H4>No events found</H4></div>}
+      <ToastContainer autoClose={2000} />
       <DeleteModel open={open} onYes={handleDelete} onNo={toggleDialog} onClose={toggleDialog}
       message="after deleting this event  you won't see it again "/>
     

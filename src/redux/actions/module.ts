@@ -1,4 +1,5 @@
 import axios from "lib/http/client";
+import {  toast } from 'react-toastify';
 
 import {
     CREATE_MODULE_SUCCESS,
@@ -31,6 +32,10 @@ export const getModules = () => (dispatch) => {
             payload: {modules:res.data},
         })
     }).catch(function (error) {
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: GET_MODULES_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }
@@ -43,7 +48,12 @@ export const getModule = (id:string) => (dispatch) => {
             payload: {module:res.data.data},
         })
     }).catch(function (error) {
-        console.log(error);
+            console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
+      
         dispatch ({ type: GET_MODULE_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }
@@ -67,7 +77,12 @@ export const createModule= (data:IModuleCreate) => (dispatch) => {
             payload: {module:res.data.data},
         })
     }).catch(function (error) {
-        console.log(error);
+            console.log(error);
+       
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: CREATE_MODULE_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }
@@ -80,7 +95,12 @@ export const updateModule = (id:string,data:IModuleUpdate) => (dispatch) => {
             payload: {module:res.data.data},
         })
     }).catch(function (error) {
-        console.log(error);
+            console.log(error);
+   
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: UPDATE_MODULE_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }
@@ -94,7 +114,11 @@ export const deleteModule = (id:string) => (dispatch) => {
             payload: res.data,
         })
     }).catch(function (error) {
-        console.log(error);
+            console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: DELETE_MODULE_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }

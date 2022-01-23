@@ -1,5 +1,5 @@
 import axios from "lib/http/client";
-
+import {  toast } from 'react-toastify';
 import {
     CREATE_PAYMENT_SUCCESS,
     CREATE_PAYMENT_LOADING,
@@ -17,7 +17,6 @@ import {
     , GET_PAYMENTS_FAILED,
     GET_PAYMENTS_LOADING
 } from '../reducers/types';
-
 import {IPaymentCreate, IPaymentUpdate,
     IResponsePaging,
     IResponse} from 'types'
@@ -25,11 +24,18 @@ import {IPaymentCreate, IPaymentUpdate,
 export const getPayments = () => (dispatch) => {
     dispatch({ type: GET_PAYMENTS_LOADING });
     axios.get<IResponsePaging>('/api/payment/').then((res) => {
+        toast.success("Sucess", {
+            icon: "🚀"
+          });
         dispatch({
             type: GET_PAYMENTS_SUCCESS,
             payload: {payments:res.data},
         })
     }).catch(function (error) {
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: GET_PAYMENTS_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }
@@ -42,7 +48,11 @@ export const getPayment = (id:string) => (dispatch) => {
             payload: {payment:res.data.data},
         })
     }).catch(function (error) {
-        console.log(error);
+          console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: GET_PAYMENT_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }
@@ -56,7 +66,11 @@ export const createPayment= (data:IPaymentCreate) => (dispatch) => {
             payload: {payment:res.data},
         })
     }).catch(function (error) {
-        console.log(error);
+          console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: CREATE_PAYMENT_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }
@@ -69,7 +83,12 @@ export const updatePayment = (id:string,data:IPaymentUpdate) => (dispatch) => {
             payload: {payment:res.data},
         })
     }).catch(function (error) {
-        console.log(error);
+          console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
+       
         dispatch ({ type: UPDATE_PAYMENT_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }
@@ -83,7 +102,11 @@ export const deletePayment = (id:string) => (dispatch) => {
             payload: res.data,
         })
     }).catch(function (error) {
-        console.log(error);
+          console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: DELETE_PAYMENT_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }

@@ -18,6 +18,7 @@ import { useRouter } from "next/router";
 import {
   getQuizes, deleteQuiz
 } from 'redux/actions/quiz'
+import { ToastContainer, toast } from 'react-toastify';
 import DeleteModel from "@component/modal/DeleteModel";
 const limit =10
 const QuizzesList = () => {
@@ -167,6 +168,7 @@ const handleDelete = async () => {
             }} />
           </FlexBox>
       </>:<div className="text-center"> <H4>No quizzes found</H4></div>}
+      <ToastContainer autoClose={2000} />
 
       <DeleteModel open={open} onYes={handleDelete} onNo={toggleDialog} onClose={toggleDialog}
       message="after deleting quiz you wont see it again "/>

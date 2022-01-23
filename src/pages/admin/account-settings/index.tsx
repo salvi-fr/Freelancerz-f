@@ -16,6 +16,7 @@ import * as yup from "yup";
 import {
   getMe,updateUser
 } from 'redux/actions/user'
+import { ToastContainer } from "react-toastify";
 
 // import { useRouter } from "next/router";
  
@@ -266,7 +267,8 @@ const AccountSettings = () => {
           )}
         </Formik>
         }
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

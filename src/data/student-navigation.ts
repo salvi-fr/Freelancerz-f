@@ -60,11 +60,11 @@ export const navbarNavigations = [
     //   title: "Your Trainings",
     //   iconName: "upload",
     // },
-    {   
-      title: "Your complains ",
-      href: "/student/complains",
-      iconName: "box",
-    },
+    // {   
+    //   title: "Your complains ",
+    //   href: "/student/complains",
+    //   iconName: "box",
+    // },
     {     
       title: "Your payments ",
       href: "/student/payments",

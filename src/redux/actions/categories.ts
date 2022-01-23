@@ -1,4 +1,5 @@
 import axios from "lib/http/client";
+import {  toast } from 'react-toastify';
 
 import {
     CREATE_CATEGORY_SUCCESS,
@@ -55,7 +56,11 @@ export const getCategory = (id:string) => (dispatch) => {
             payload: {category:res.data.data},
         })
     }).catch(function (error) {
-        console.log(error);
+          console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: GET_CATEGORY_FAILED, 
             payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}  })
       });
@@ -70,7 +75,11 @@ export const createCategory = (data:ICategoryCreate) => (dispatch) => {
             payload: {category:res.data},
         })
     }).catch(function (error) {
-        console.log(error);
+          console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: CREATE_CATEGORY_FAILED,
             payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}  })
       });
@@ -102,7 +111,11 @@ export const deleteCategory  = (id:string) => (dispatch) => {
             payload: res.data,
         })
     }).catch(function (error) {
-        console.log(error);
+          console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: DELETE_CATEGORY_FAILED, 
             payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}  })
       });

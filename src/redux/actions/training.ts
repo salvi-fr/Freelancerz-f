@@ -1,4 +1,5 @@
 import axios from "lib/http/client";
+import {  toast } from 'react-toastify';
 
 import {
     CREATE_TRAINING_SUCCESS,
@@ -55,7 +56,11 @@ export const getTraining = (id:string) => (dispatch) => {
             payload: {training:res.data.data},
         })
     }).catch(function (error) {
-        console.log(error);
+          console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: GET_TRAINING_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }
@@ -69,7 +74,11 @@ export const createTraining= (data:ITrainingCreate) => (dispatch) => {
             payload: {training:res.data},
         })
     }).catch(function (error) {
-        console.log(error);
+          console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: CREATE_TRAINING_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"} })
       });
 }
@@ -82,7 +91,11 @@ export const updateTraining = (id:string,data:ITrainingUpdate) => (dispatch) => 
             payload: {training:res.data},
         })
     }).catch(function (error) {
-        console.log(error);
+          console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: UPDATE_TRAINING_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"} })
       });
 }
@@ -96,7 +109,11 @@ export const deleteTraining = (id:string) => (dispatch) => {
             payload: res.data,
         })
     }).catch(function (error) {
-        console.log(error);
+          console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: DELETE_TRAINING_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"} })
       });
 }

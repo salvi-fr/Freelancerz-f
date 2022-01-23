@@ -20,6 +20,7 @@ import {
 } from 'redux/actions/lecture'
 import { useRouter } from "next/router";
 import DeleteModel from "@component/modal/DeleteModel";
+import { ToastContainer } from "react-toastify";
 const limit =10
 const LecturesList = () => {
      
@@ -165,6 +166,7 @@ const LecturesList = () => {
             }} />
           </FlexBox>
       </>:<div className="text-center"> <H4>No lectures found</H4></div>}
+      <ToastContainer autoClose={2000} />
       <DeleteModel open={open} onYes={handleDelete} onNo={toggleDialog} onClose={toggleDialog}
       message="after deleting this lecture  you won't see it again "/>
       

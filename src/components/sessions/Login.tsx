@@ -16,8 +16,6 @@ import { useDispatch } from 'react-redux'
 import {useSelector} from 'utils/utils'
 import {
   Login,
-  // RefreshToken,
-  // Signup
 } from '../../redux/actions/auth'
 import { useAppContext } from "@context/app/AppContext";
 
@@ -26,28 +24,14 @@ const LoginC: React.FC = () => {
   const [passwordVisibility, setPasswordVisibility] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch()
-
-  // const {refreshAuthloading=false}= useSelector((state) => state.auth)
-  // const {refreshAuthSuccess=false}= useSelector((state) => state.auth)
-  // const {refreshAuthFailed=false}= useSelector((state) => state.auth)
   const {loginAuthloading=false}= useSelector((state) => state.auth)
   const {loginAuthSuccess=false}= useSelector((state) => state.auth)
-  // const {loginAuthFailed=false}= useSelector((state) => state.auth)
-  // const {refreshToken=null}= useSelector((state) => state.auth)
-  // const {accessToken=null}= useSelector((state) => state.auth)
   const {error=null}= useSelector((state) => state.auth)
   const firstUpdate = useRef(true);
   const [foundError,setFoundError]= useState(null)
   const togglePasswordVisibility = useCallback(() => {
     setPasswordVisibility((visible) => !visible);
   }, []);
-
-  useEffect(() => {
-    // dispatch(getProductList())
-    // dispatch(getCategoryList())
-    // dispatch(getRatingList())
-    // dispatch(getBrandList())
-}, [dispatch])
 
 useEffect(() => {
   if(error&& !firstUpdate.current){
@@ -105,7 +89,7 @@ useEffect(() => {
           textAlign="center"
           mb="2.25rem"
         >
-          Log in with email & password
+          Log in with email and password
         </H5>
 
         <TextField
@@ -167,38 +151,6 @@ useEffect(() => {
           </FlexBox>
         </Box>
 
-        {/* <FlexBox
-          justifyContent="center"
-          alignItems="center"
-          bg="#3B5998"
-          borderRadius={5}
-          height="40px"
-          color="white"
-          cursor="pointer"
-          mb="0.75rem"
-        >
-          <Icon variant="small" defaultcolor="auto" mr="0.5rem">
-            facebook-filled-white
-          </Icon>
-          <Small fontWeight="600">Continue with Facebook</Small>
-        </FlexBox>
-
-        <FlexBox
-          justifyContent="center"
-          alignItems="center"
-          bg="#4285F4"
-          borderRadius={5}
-          height="40px"
-          color="white"
-          cursor="pointer"
-          mb="1.25rem"
-        >
-          <Icon variant="small" defaultcolor="auto" mr="0.5rem">
-            google-1
-          </Icon>
-          <Small fontWeight="600">Continue with Google</Small>
-        </FlexBox> */}
-
         <FlexBox justifyContent="center" mb="1.25rem">
           <SemiSpan>Don’t have account?</SemiSpan>
           <Link href="/signup">
@@ -220,6 +172,17 @@ useEffect(() => {
             </H6>
           </a>
         </Link>
+        <Span color="text.muted"  px="1rem">
+                            or
+                        </Span>
+                        
+                <Link href="/">
+                    <a>
+                        <H6 ml="0.5rem" borderBottom="1px solid" borderColor="gray.900">
+                            Go to home page
+                        </H6>
+                    </a>
+                </Link>
       </FlexBox>
       </>
       }

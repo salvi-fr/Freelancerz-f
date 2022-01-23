@@ -27,6 +27,7 @@ import Select from "@component/Select";
 import MultipleSelect from '@component/multipleSelect';
 import RichTextEditor from '@component/RichTextEditor/RichTextEditor'
 import DropZone from "@component/DropZone";
+import { ToastContainer } from "react-toastify";
 import TextArea from "@component/textarea/TextArea";
 
 const CourseEditor = () => {
@@ -247,7 +248,8 @@ const CourseEditor = () => {
             </form>
           )}
         </Formik>
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

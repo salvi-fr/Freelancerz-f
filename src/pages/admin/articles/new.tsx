@@ -9,77 +9,77 @@ import { Formik } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useDispatch } from 'react-redux'
-import {useSelector} from 'utils/utils'
+import {uploadImageFirebase, useSelector} from 'utils/utils'
 import React, { useState,useRef,useEffect } from "react";
 import * as yup from "yup";
 import RichTextEditor from '@component/RichTextEditor/RichTextEditor'
   import {
     createArticle
   } from 'redux/actions/article'
-  import firebaseStorage from "lib/firebaseCloudStorage";
   import Spinner from "@component/Spinner";
 import TextArea from "@component/textarea/TextArea";
-
+import { toast, ToastContainer } from "react-toastify";
 const NewArticle = () => {
     const router = useRouter();
   const dispatch = useDispatch()
   const {error:articleError=null}= useSelector((state) => state.article)
-  const {createArticleloading=false}= useSelector((state) => state.article)
-  const {createArticleSuccess=false}= useSelector((state) => state.article)
  const [file,setFile]=useState(null)
-
+ const {createArticleSuccess=false, createArticleFailed=false}= useSelector((state) => state.article)
+ const [loading , setLoading]= useState(false)
+ useEffect(() => {
+   if(createArticleFailed && loading){
+     toast.error(articleError, {
+       icon: "😨"
+     });
+     setLoading(false)  
+     router.reload()
+   }
+ }, [createArticleFailed])
+useEffect(() => {
+ if(createArticleSuccess && loading){
+   toast.success("successfully updated", {
+     icon: "🚀",
+     position: "top-right",
+autoClose: 5000
+   });
+   setLoading(false)
+   if(router.query.redirect){
+     
+     router.push(`/${router.query.redirect}`);
+   }else{
+     router.push("/admin/articles");
+   }
+   
+ }
+}, [createArticleSuccess,loading])
   const firstUpdate = useRef(true);
   const [foundError,setFoundError]= useState(null)
-console.log(foundError)
-  useEffect(() => {
-    if(articleError && !firstUpdate.current){
-        setFoundError(articleError)
-        console.log("got error", articleError)
-      }
-  }, [articleError])
 
   const [content, setContent] = useState(
     null
 )
-useEffect(() => {
-  if(createArticleSuccess && !firstUpdate.current){
-    if(router.query.redirect){
-       
-      router.push(`/${router.query.redirect}`);
-    }else{
-       
-      router.push("/admin/articles");
-    }
-    
-  }
-}, [createArticleSuccess])
+
 
   const handleFormSubmit = async (values) => {
+    setLoading(true)
     if(file){
-      let uploadAvatar = await firebaseStorage
-      .ref(
-        `/Articles Documents/${values.title} /` +
-        file.name
-      )
-      .put(file);
-    let downloadAvatar = await (await uploadAvatar).ref.getDownloadURL();
-    values.avatar = downloadAvatar
-    }
+
+      const avatarUrl= await uploadImageFirebase(file,`Article`)
+        values.avatar=avatarUrl
+      }
     values.content= content
       const {tags,...rest}= values
     try {
       await dispatch(createArticle(rest))
       firstUpdate.current=false
-      router.push("/admin/articles");
     } catch (e) {
+      setLoading(false)
       console.log("got error", e)
         setFoundError(e.message)
         
     }
   };
-//   const {
-//     query: { id },
-//   } = useRouter();
+
 
 
   return (
@@ -173,14 +173,15 @@ useEffect(() => {
                 </Grid>
               </Box>
 
-              <Button type="submit" variant="contained" color="primary" disabled={!content || createArticleloading}>
-                {createArticleloading ? <Spinner /> : "Create Article"}
+              <Button type="submit" variant="contained" color="primary" disabled={!content || loading || file }>
+                {loading ? <Spinner /> : "Create Article"}
                 
               </Button>
             </form>
           )}
         </Formik>
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

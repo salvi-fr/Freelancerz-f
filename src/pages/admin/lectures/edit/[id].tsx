@@ -12,21 +12,14 @@ import { useDispatch } from 'react-redux'
 import {useSelector} from 'utils/utils'
 import React, { useState,useRef,useEffect } from "react";
 import * as yup from "yup";
-import Icon from "@component/icon/Icon";
 
-  import {
-    updateQuiz
-  } from 'redux/actions/quiz'
-import TextArea from "@component/textarea/TextArea";
 import Select from "@component/Select";
-import { H6 } from "@component/Typography";
-import FlexBox from "@component/FlexBox";
-import IconButton from "@component/buttons/IconButton";
 import Divider from "@component/Divider";
-import CheckBox from "@component/CheckBox";
-import Radio from "@component/radio/Radio";
-import {getQuiz} from 'redux/actions/quiz'
-import DropZone from "@component/DropZone";
+import {getLecture, updateLecture} from 'redux/actions/lecture'
+import {getQuizes} from 'redux/actions/quiz'
+import RichTextEditor from '@component/RichTextEditor/RichTextEditor'
+import { IQuiz } from "types";
+import { toast, ToastContainer } from "react-toastify";
 
 const EditQuiz = () => {
     const router = useRouter();
@@ -34,98 +27,108 @@ const EditQuiz = () => {
  const {
     query: { id },
   } = useRouter();
-  console.log(id)
-  const {error:quizError=null}= useSelector((state) => state.quiz)
-  const {quiz:fechedQuiz=null}= useSelector((state) => state.quiz)
- 
-  const {updateQuizSuccess=false}= useSelector((state) => state.quiz)
-  const [quizMock, setQuizMock]=useState(null)
-  const [loading , setLoading]= useState(true)
- const [quizAnswers, setQuizAnswers]=useState([])
- const [quizNewAnswer,setQuizNewAnswer]=useState("")
-const [type,setType]= useState('')
+const {error:lectureError=null}= useSelector((state) => state.lecture);
+  const {lecture:fechedLecture=null}= useSelector((state) => state.lecture)
+  const [content, setContent] = useState(
+    null
+)
+const {quizes=null}= useSelector((state) => state.quiz)
+const [quizzesData, setQuizzesData]= useState([])
+  const [lectureMock, setLectureMock]=useState(null)
+  
   const firstUpdate = useRef(true);
   const [foundError,setFoundError]= useState(null)
-  
+  const {updateLectureSuccess=false, updateLectureFailed=false}= useSelector((state) => state.lecture)
+  const [loading , setLoading]= useState(false)
   useEffect(() => {
-    dispatch(getQuiz(id as string ))
-    firstUpdate.current = false
-  }, [dispatch])
-  useEffect(() => {
-    if(quizError && !firstUpdate.current){
-        setFoundError(quizError)
-      }
-  }, [quizError])
-
-  useEffect(() => {
-    if(fechedQuiz){
-      setQuizMock({...fechedQuiz, quiz_type:quizTypes.find(type => type.value === fechedQuiz.type)})
-      setLoading(false)
-      setQuizAnswers(fechedQuiz.answers)
-      setType(fechedQuiz.type)
-      }
-  }, [fechedQuiz])
-
+    if(updateLectureFailed && loading){
+      toast.error(lectureError, {
+        icon: "😨"
+      });
+      setLoading(false)  
+      router.reload()
+    }
+  }, [updateLectureFailed])
 useEffect(() => {
-  if(updateQuizSuccess && !loading){
+  if(updateLectureSuccess && loading){
+    toast.success("successfully updated", {
+      icon: "🚀",
+      position: "top-right",
+autoClose: 5000
+    });
+    setLoading(false)
     if(router.query.redirect){
+      
       router.push(`/${router.query.redirect}`);
     }else{
-      router.push("/admin/quizzes");
+      router.push("/admin/lectures");
     }
     
   }
-}, [updateQuizSuccess])
-const handleAnswerSubmit = async () => {
-  try {
-      setQuizAnswers([...quizAnswers,{answer:quizNewAnswer,is_answer:false}])
-    setQuizNewAnswer("")
+}, [updateLectureSuccess])
+  useEffect(() => {
+    dispatch(getQuizes())
+    dispatch(getLecture(id as string ))
+    firstUpdate.current = false
+  }, [dispatch])
+ 
+
+  
+
+  useEffect(() => {
+    if (quizes && quizes.data) {
+        setQuizzesData([])
+        quizes.data.map((item) => {
+        setQuizzesData((prevState) => [...prevState, { value: item._id, label: item.title }]);
+        })
+    }
    
-    
-  } catch (e) {
-    console.log("got error", e,foundError)
-      setFoundError(e.message)
+  }, [quizes])
+
+
+  useEffect(() => {
+    if(updateLectureFailed && loading){
+      toast.error(lectureError, {
+        icon: "😨"
+      });
+      setLoading(false)  
+      router.reload()
+    }
+  }, [updateLectureFailed])
+useEffect(() => {
+  if(updateLectureSuccess && loading){
+    toast.success("successfully updated", {
+      icon: "🚀",
+      position: "top-right",
+autoClose: 5000
+    });
+    setLoading(false)
+    if(router.query.redirect){
       
-  }
-};
-const handleIsAnswer= async (index)=>{
-  try {
-    const newQuizAnswers=[...quizAnswers]
-    if(type=="SINGLE"){
-      quizAnswers.map((a,i)=>{
-        if(a.is_answer=true && i!=index && quizAnswers[index].is_answer==false){
-          a.is_answer=false
-        }
-      })
+      router.push(`/${router.query.redirect}`);
+    }else{
+      router.push("/admin/lectures");
     }
     
-    newQuizAnswers[index].is_answer=!newQuizAnswers[index].is_answer
-    setQuizAnswers(newQuizAnswers)
-  } catch (e) {
-    console.log("got error", e)
-      setFoundError(e.message)
-      
   }
-}
-const handleRemoveAnswer= async (index)=>{
-  try {
-    const newQuizAnswers=[...quizAnswers]
-    newQuizAnswers.splice(index,1)
-    setQuizAnswers(newQuizAnswers)
-  } catch (e) {
-    console.log("got error", e)
-      setFoundError(e.message)
-      
-  }
-}
+}, [updateLectureSuccess])
+
+  useEffect(() => {
+    if(fechedLecture){
+      setContent(fechedLecture.content)
+      const lC=fechedLecture.quiz?  fechedLecture.quiz as IQuiz : null
+      setLectureMock({...fechedLecture, quiz: lC? quizzesData.find(type => type.value === lC._id):null})
+      }
+  }, [fechedLecture,quizzesData])
+
   const handleFormSubmit = async (values) => {
     try {
-      const { title,description,activated} = values;
-      const quiz = {title,description,type, activated,answers:quizAnswers}
-     values.answers=quizAnswers
-    
-      await dispatch(updateQuiz(id as string,quiz))
+      setLoading(true)
+      let {_id,created_by,createdAt,updatedAt,quiz, ...rest}=values
+      rest.quiz=quiz.value? quiz.value:null
+      await dispatch(updateLecture(id as string,rest))
     } catch (e) {
+      setLoading(false)
       console.log("got error", e)
         setFoundError(e.message)
         
@@ -134,23 +137,30 @@ const handleRemoveAnswer= async (index)=>{
 
   return (
     <div>
+      <ToastContainer position="top-right"
+autoClose={5000} />
       <DashboardPageHeader
         iconName="edit"
-        title="Edit quiz" from="Admin"
+        title="Edit lecture" from="Admin"
         button={
-          <Link href="/admin/quizzes">
+          <Link href="/admin/lectures">
             <Button color="primary" bg="primary.light" px="2rem">
-              Back to quizes
+              Back to lectures
             </Button>
           </Link>
         }
       />
 
       <Card1>
-      {loading? <p>Loading</p>:
-
+      {!lectureMock? <p>Loading</p>:
+<>
+<RichTextEditor
+                content={content}
+                handleContentChange={(content) => setContent(content)}
+                placeholder="insert content here..."
+            />
         <Formik
-          initialValues={quizMock}
+          initialValues={lectureMock}
           validationSchema={checkoutSchema}
           onSubmit={handleFormSubmit}
         >
@@ -164,182 +174,46 @@ const handleRemoveAnswer= async (index)=>{
             setFieldValue,
           }) => (
             <form onSubmit={handleSubmit}>
-              <Box mb="30px">
-                <Grid container horizontal_spacing={6} vertical_spacing={4}>
-                  <Grid item md={6} xs={12}>
-                    <TextField
-                      name="title"
-                      label="Title"
-                      fullwidth
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.title || ""}
-                      errorText={touched.title  && errors.title }
-                    />
-                  </Grid>
-                  <Grid item md={6} xs={12}>
-                    <TextArea
-                      name="description"
-                      label="Description"
-                      fullwidth
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.description || ""}
-                      errorText={touched.description && errors.description}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                  <DropZone
-                    onChange={(files) => {
-                      console.log(files);
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextArea
-                    name="description"
-                    label="Description"
-                    placeholder="Description"
-                    rows={6}
+            <Box mb="30px" mt="30px">
+              <Grid container horizontal_spacing={6} vertical_spacing={4}>
+                <Grid item md={6} xs={12}>
+                  <TextField
+                    name="title"
+                    label="Title"
                     fullwidth
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    value={values.description || ""}
-                    errorText={touched.description && errors.description}
+                    value={values.title || ""}
+                    errorText={touched.title  && errors.title }
                   />
                 </Grid>
-                  <Grid item md={6} xs={12}>
-                  <Select
-                    label="Quiz type"
-                    placeholder="Select Quiz Type"
-                    options={quizTypes}
-                    value={values.quiz_type || ""}
-                    onChange={(t:any) => {
-                      // setQuizAnswers([])
-                      setType(t.value)
-                      setFieldValue("answer", null);
-                      setFieldValue("quiz_type", t);
-                    }}
-                    errorText={touched.quiz_type && errors.quiz_type}
-                  />
-                 
-                  </Grid>
-                
-                </Grid>
-        
-              <Box mb="30px">
-                <Grid container horizontal_spacing={6} vertical_spacing={4}>
-             
-                <Divider bg="gray.300" m="0.5rem" />
-                 
-                  {/* <hr></hr> */}
-                  <Grid item md={8} xs={12}>
-                   {(type=='MULTIPLE' || type=='SINGLE') && 
-                   
-                      <TextField
-                      name="quizNewAnswer"
-                      label="Type an answer"
-                      fullwidth
-                      onChange={(a) => { 
-                        setQuizNewAnswer(a.target.value)
-                      }}
-                      value={quizNewAnswer|| ""}
-                    /> 
-                   
-                } 
-                     { type=='COMPLETE' && 
-                   
-                      <TextArea
-                      name="quizNewAnswer"
-                      label="Type an answer"
-                      fullwidth
-                      onChange={(a) => {
-                        setQuizNewAnswer(a.target.value)
-                      }}
-                      value={quizNewAnswer|| ""}
-                    /> 
-                } 
+
+              
+                <Grid item md={6} xs={12}>
+                <Select
+                  label="Quiz"
+                  placeholder="Select Quiz"
+                  options={quizzesData}
+                  value={values.quiz || ""}
+                  onChange={(q) => {
+                    setFieldValue("quiz", q);
+                  }}
+                  errorText={touched.quiz && errors.quiz}
+                />
                 </Grid>
                 
-                </Grid>
-     
-              </Box>
+              </Grid>
+            </Box>
 
-              <Button  variant="contained" color="secondary" onClick={handleAnswerSubmit} disabled={!quizNewAnswer}>
-                Add Answer
-              </Button>
-           
-                <Box py="0.5rem">
-          {quizAnswers.map((item,index) => (
-            <FlexBox
-              px="1rem"
-              py="0.5rem"
-              flexWrap="wrap"
-              alignItems="center"
-              key={index}
-            >
-              <FlexBox flex="2 2 260px" m="6px" alignItems="center">
-             
-                <Box ml="20px">
-                 
-                  <FlexBox alignItems="center">
-              {type!='SINGLE' &&    <CheckBox
-          mb="1.75rem"
-          name="isAnswer"
-          color="secondary"
-          checked={item.is_answer}
-          onChange={() => {
-            handleIsAnswer(index)
-          }}
-          label={
-            <FlexBox>
-                <H6 ml="0.5rem" borderBottom="1px solid" borderColor="gray.900">
-                {item.answer}
-                </H6>
-            </FlexBox>
-          }
-        />}
-
-{type=='SINGLE' &&    <Radio
-          mb="1.75rem"
-          name="isAnswer"
-          color="secondary"
-          checked={item.is_answer}
-          onChange={() => {
-            handleIsAnswer(index)
-          }}
-          label={
-            <FlexBox>
-                <H6 ml="0.5rem" borderBottom="1px solid" borderColor="gray.900">
-                {item.answer}
-                </H6>
-            </FlexBox>
-          }
-        />}
-                  </FlexBox>
-                </Box>
-              </FlexBox>
-  
-              <FlexBox flex="0 0 0 !important" m="6px" alignItems="center">
-                <IconButton size="small" onClick={()=>{
-                  handleRemoveAnswer(index)
-                }}>
-                  <Icon variant="small">delete</Icon>
-                </IconButton>
-              </FlexBox>
-            </FlexBox>
-          ))}
-        </Box>
-              </Box>
-
-              <Button type="submit" variant="contained" color="primary" disabled={!quizAnswers.length} onClick ={() => {
+              <Button type="submit" variant="contained" color="primary" disabled={ loading} onClick ={() => {
             handleFormSubmit(values)
           }}>
-                Save changes
+                {loading? "Loading":"Save changes"}
               </Button>
             </form>
           )}
         </Formik>
+        </>
          }
         <Divider bg="gray.300" m="0.5rem" />
         

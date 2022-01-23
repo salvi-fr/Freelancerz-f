@@ -1,4 +1,5 @@
 import axios from "lib/http/client";
+import {  toast } from 'react-toastify';
 
 import {
     CREATE_ARTICLE_SUCCESS,
@@ -29,6 +30,11 @@ export const getArticles = () => (dispatch) => {
             payload: {articles:res.data}
         })
     }).catch(function (error) {
+        console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: GET_ARTICLES_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"} })
       });
 }
@@ -41,7 +47,12 @@ export const getArticle = (id:string) => (dispatch) => {
             payload: {article:res.data.data},
         })
     }).catch(function (error) {
-        console.log(error.response);
+        console.log(error);
+        console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: GET_ARTICLE_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"} })
       });
 }
@@ -54,6 +65,11 @@ export const getMyArticle = () => (dispatch) => {
             payload: {articles:res.data}
         })
     }).catch(function (error) {
+        console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: GET_ARTICLES_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"} })
       });
 }
@@ -67,7 +83,12 @@ export const createArticle= (data:IArticleCreate) => (dispatch) => {
             payload: {article:res.data},
         })
     }).catch(function (error) {
-         console.log(error.response);
+         console.log(error);
+         console.log(error);
+         const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+         toast.error(er, {
+             icon: "🚀"
+           });
         dispatch ({ type: CREATE_ARTICLE_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"} })
       });
 }
@@ -80,7 +101,11 @@ export const updateArticle = (id:string,data:IArticleUpdate) => (dispatch) => {
             payload: {article:res.data.data},
         })
     }).catch(function (error) {
-         console.log(error.response);
+        console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: UPDATE_ARTICLE_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"} })
       });
 }
@@ -94,7 +119,11 @@ export const deleteArticle = (id:string) => (dispatch) => {
             payload: res.data,
         })
     }).catch(function (error) {
-         console.log(error.response);
+        console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: DELETE_ARTICLE_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"} })
       });
 }

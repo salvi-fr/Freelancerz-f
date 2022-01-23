@@ -46,7 +46,7 @@ const ShopIntroCard: React.FC<ShopIntroCardProps> = () => {
 
             <FlexBox my="8px">
               {socialLinks.map((item, ind) => (
-                <a href={item.url} target="_blank" rel="noreferrer noopener">
+                <a href={item.url} target="_blank" rel="noreferrer noopener" key={ind}>
                   <Icon
                     mr={ind < socialLinks.length - 1 && "10px"}
                     defaultcolor="auto"

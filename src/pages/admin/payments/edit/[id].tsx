@@ -20,6 +20,7 @@ import { getOpenCourses } from "@redux/actions/course";
 import { getUsers } from "@redux/actions/user";
 import { ICourse, IUser } from "types";
 import Select from "@component/Select";
+import { toast } from "react-toastify";
 const EditPayment = () => {
     const router = useRouter();
   const dispatch = useDispatch()
@@ -29,29 +30,46 @@ const EditPayment = () => {
   console.log(id)
   const {error:paymentError=null}= useSelector((state) => state.payment)
   const {payment:fechedPayment=null}= useSelector((state) => state.payment)
-  const {updatePaymentSuccess=false}= useSelector((state) => state.payment)
-  const {updatePaymentloading =false}= useSelector((state) => state.payment)
-  const {getPaymentloading=false}= useSelector((state) => state.payment)
   const [paymentMock, setPaymentMock]=useState(null)
-  const [loading , setLoading]= useState(true)
   const [coursesData , setCoursesData]= useState(null)
   const {courses:mCourses=null}= useSelector((state) => state.course)
   const [usersData , setUsersData]= useState(null)
   const {users=null}=useSelector((state)=> state.user)
-  const firstUpdate = useRef(true);
-  const [foundError,setFoundError]= useState(null)
+  const { updatePaymentSuccess=false,  updatePaymentFailed=false}= useSelector((state) => state.payment)
+const [loading , setLoading]= useState(false)
+useEffect(() => {
+  if( updatePaymentFailed && loading){
+    toast.error(paymentError, {
+      icon: "😨"
+    });
+    setLoading(false)  
+    router.reload()
+  }
+}, [ updatePaymentFailed])
+useEffect(() => {
+if( updatePaymentSuccess && loading){
+  toast.success("successfully updated", {
+    icon: "🚀",
+    position: "top-right",
+autoClose: 5000
+  });
+  setLoading(false)
+  if(router.query.redirect){
+    
+    router.push(`/${router.query.redirect}`);
+  }else{
+    router.push("/admin/payment");
+  } 
+}
+}, [ updatePaymentSuccess,loading])
+
+
   useEffect(() => {
-    setLoading(true)
+    dispatch(getOpenCourses())
+    dispatch(getUsers())
     dispatch(getPayment(id as string))
-        dispatch(getOpenCourses())
-        dispatch(getUsers())
-        firstUpdate.current = false
       }, [dispatch])
-    useEffect(() => {
-      if(paymentError && !firstUpdate.current){
-          setFoundError(paymentError)
-        }
-    }, [paymentError])
+
   
     useEffect(() => {
   if (mCourses && mCourses.data) {
@@ -62,6 +80,7 @@ const EditPayment = () => {
       }
     }, [mCourses])
   
+
     useEffect(() => {
       if (users && users.data) {
               setUsersData([])
@@ -70,16 +89,6 @@ const EditPayment = () => {
               })  
           }
         }, [users])
-  useEffect(() => {
-    dispatch(getPayment(id as string ))
-    firstUpdate.current = false
-  }, [dispatch])
-  useEffect(() => {
-    if(paymentError && !firstUpdate.current){
-        setFoundError(paymentError)
-      }
-      console.log(foundError)
-  }, [paymentError])
 
   useEffect(() => {
     if(fechedPayment){
@@ -94,21 +103,11 @@ const EditPayment = () => {
       setLoading(false)
       }
       console.log(paymentMock)
-  }, [fechedPayment])
+  }, [fechedPayment,usersData,coursesData])
 
-useEffect(() => {
-  if(updatePaymentSuccess && !loading){
-    if(router.query.redirect){
-      router.push(`/${router.query.redirect}`);
-    }else{
-      router.push("/admin/payments");
-    }
-    
-  }
-}, [updatePaymentSuccess])
 
   const handleFormSubmit = async (values) => {
-
+setLoading(true)
     try {
       values.type= values.type? values.type.value:"CASH",
       values.status= values.status? values.status.value:null,
@@ -120,8 +119,8 @@ useEffect(() => {
      console.log('just about to update',rest)
       await dispatch(updatePayment(id as string,rest))
     } catch (e) {
+      setLoading(false)
       console.log("got error", e)
-        setFoundError(e.message)
         
     }
   };
@@ -140,7 +139,7 @@ useEffect(() => {
         }
       />
      <Card1>
-{loading || getPaymentloading?<Spinner/>:
+{!paymentMock? <Spinner/>:
 <>
    <Formik
    initialValues={paymentMock}
@@ -255,8 +254,8 @@ useEffect(() => {
                 </Grid>
               </Box>
 
-       <Button type="submit" variant="contained" color="primary" disabled= { updatePaymentloading}>
-       {updatePaymentloading && <Spinner  />}
+       <Button type="submit" variant="contained" color="primary" disabled= { loading}>
+       {loading && <Spinner  />}
          Update Payment
        </Button>
      </form>

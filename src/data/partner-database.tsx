@@ -1,4 +1,4 @@
-export default [
+const Partners = [
     {
         title: "jica",
         imgUrl: "/assets/health/partners/jica.jpg",
@@ -53,10 +53,8 @@ export default [
         webUrl: "",
         id: "1499483877456219",
       },
-    
-    
- 
-
 
   ];
+
+  export default  Partners 
   

@@ -15,6 +15,7 @@ import Button from "@component/buttons/Button";
 // import { useRouter } from "next/router";
 import { useDispatch } from 'react-redux'
 import {useSelector} from 'utils/utils'
+import { ToastContainer } from "react-toastify";
 import {
   getPromos,deletePromo
 } from 'redux/actions/promo'
@@ -169,6 +170,7 @@ useEffect(() => {
             }} />
           </FlexBox>
       </> :<div className="text-center"> <H4>No promo found</H4></div>}
+      <ToastContainer autoClose={2000} />
       <DeleteModel open={open} onYes={handleDelete} onNo={toggleDialog} onClose={toggleDialog}
       message="after deleting this promo  you won't see it again "/>
     

@@ -13,7 +13,7 @@ import {useSelector} from 'utils/utils'
 import React, { useState,useRef,useEffect } from "react";
 import * as yup from "yup";
 
-
+import { ToastContainer } from "react-toastify";
   import {
     createLecture
   } from 'redux/actions/lecture'
@@ -32,8 +32,8 @@ const NewLecture = () => {
   const {error:quizError=null}= useSelector((state) => state.quiz)
   const [quizzesData, setQuizzesData]= useState([])
   const {error:lectureError=null}= useSelector((state) => state.lecture)
-  const {createLectureSuccess=false}= useSelector((state) => state.lecture)
- 
+  const {createLectureSuccess=false, createLectureFailed=false}= useSelector((state) => state.lecture)
+ const [loading ,setLoading]= useState(false)
   useEffect(() => {
     dispatch(getQuizes())
   }, [dispatch])
@@ -50,6 +50,25 @@ const NewLecture = () => {
     null
 )
 useEffect(() => {
+  if(createLectureFailed && loading){
+    setLoading(false)  
+    router.reload()
+  }
+}, [createLectureFailed])
+
+useEffect(() => {
+if(createLectureSuccess && loading){
+  setLoading(false)
+  if(router.query.redirect){
+    
+    router.push(`/${router.query.redirect}`);
+  }else{
+    router.push("/admin/lectures");
+  }
+  
+}
+}, [createLectureSuccess])
+useEffect(() => {
   if(quizError && !firstUpdate.current){
       setFoundError(quizError)
     }
@@ -61,20 +80,10 @@ useEffect(() => {
   }
   console.log("found quizes",quizzesData)
 }, [quizes])
-useEffect(() => {
-  if(createLectureSuccess && !firstUpdate.current){
-    firstUpdate.current = true
-    if(router.query.redirect){
-      router.push(`/${router.query.redirect}`);
-    }else{
-      router.push("/admin/lectures");
-    }
-    
-  }
-}, [createLectureSuccess])
 
   const handleFormSubmit = async (values) => {
     try {
+      setLoading(true)
       let v= values
      v.content=content
      v.quiz=v.quiz? v.quiz.value:null
@@ -83,6 +92,7 @@ useEffect(() => {
       firstUpdate.current = false
       
     } catch (e) {
+      setLoading(false)
       console.log("got error", e)
         setFoundError(e.message)
         
@@ -163,13 +173,14 @@ useEffect(() => {
                 </Grid>
               </Box>
 
-              <Button type="submit" variant="contained" color="primary" disabled={!content}>
-                Create
+              <Button type="submit" variant="contained" color="primary" disabled={!content || loading}>
+               {loading?  "loading":"Create"} 
               </Button>
             </form>
           )}
         </Formik>
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

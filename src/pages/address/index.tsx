@@ -23,8 +23,8 @@ const AddressList = () => {
         }
       />
 
-      {orderList.map(() => (
-        <TableRow my="1rem" padding="6px 18px">
+      {orderList.map((or,key) => (
+        <TableRow my="1rem" padding="6px 18px" key={key}>
           <Typography className="pre" m="6px" textAlign="left">
             Ralf Edward
           </Typography>

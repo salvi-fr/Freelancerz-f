@@ -18,6 +18,7 @@ import {useSelector} from 'utils/utils'
 import {
   getModules,deleteModule
 } from 'redux/actions/module'
+import { ToastContainer } from "react-toastify";
 import { useRouter } from "next/router";
 import DeleteModel from "@component/modal/DeleteModel";
 const limit =10
@@ -166,6 +167,7 @@ const ModulesList = () => {
             }} />
           </FlexBox>
       </>:<div className="text-center"> <H4>No modules found</H4></div>}
+      <ToastContainer autoClose={2000} />
       <DeleteModel open={open} onYes={handleDelete} onNo={toggleDialog} onClose={toggleDialog}
       message="after deleting this module  you won't see it again "/>
       

@@ -9,17 +9,17 @@ import { Formik } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useDispatch } from 'react-redux'
-import {useSelector} from 'utils/utils'
+import {uploadImageFirebase, useSelector} from 'utils/utils'
 import React, { useState,useRef,useEffect } from "react";
 import * as yup from "yup";
 import RichTextEditor from '@component/RichTextEditor/RichTextEditor'
   import {
     updateArticle,getArticle
   } from 'redux/actions/article'
-  import firebaseStorage from "lib/firebaseCloudStorage";
   import Spinner from "@component/Spinner";
   import DropZone from "@component/DropZone";
   import TextArea from "@component/textarea/TextArea";
+import { toast } from "react-toastify";
 const NewArticle = () => {
   const router = useRouter();
   const dispatch = useDispatch()
@@ -29,16 +29,38 @@ const NewArticle = () => {
 
   const { article: fechedArticle=null}= useSelector((state) => state.article)
   const {error:articleError=null}= useSelector((state) => state.article)
-  const {updateArticleloading=false}= useSelector((state) => state.article)
-  const {updateArticleSuccess=false}= useSelector((state) => state.article)
  const [file,setFile]=useState(null)
-
   const firstUpdate = useRef(true);
   const [foundError,setFoundError]= useState(null)
-//   const [categoriesData,setCategoriesData]= useState([])
-//   const [isNewArticle,setIsNewArticle]= useState(true)
 const [articleMock, setArticleMock]=useState(null)
-const [loading , setLoading]= useState(true)
+const {updateArticleSuccess=false, updateArticleFailed=false}= useSelector((state) => state.article)
+const [loading , setLoading]= useState(false)
+useEffect(() => {
+  if(updateArticleFailed && loading){
+    toast.error(articleError, {
+      icon: "😨"
+    });
+    setLoading(false)  
+    router.reload()
+  }
+}, [updateArticleFailed])
+useEffect(() => {
+if(updateArticleSuccess && loading){
+  toast.success("successfully updated", {
+    icon: "🚀",
+    position: "top-right",
+autoClose: 5000
+  });
+  setLoading(false)
+  if(router.query.redirect){
+    
+    router.push(`/${router.query.redirect}`);
+  }else{
+    router.push("/admin/articles");
+  }
+  
+}
+}, [updateArticleSuccess,loading])
 console.log(foundError)
   useEffect(() => {
     if(articleError && !firstUpdate.current){
@@ -61,43 +83,15 @@ useEffect(() => {
   dispatch(getArticle(id as string ))
   firstUpdate.current = false
 }, [dispatch])
-useEffect(() => {
-  if(updateArticleSuccess && !firstUpdate.current){
-    if(router.query.redirect){
-        // firstUpdate.current=true
-      router.push(`/${router.query.redirect}`);
-    }else{
-       
-      router.push("/admin/articles");
-    }
-    
-  }
-}, [updateArticleSuccess])
-useEffect(() => {
-  if(updateArticleSuccess && !firstUpdate.current){
-    if(router.query.redirect){
-        // firstUpdate.current=true
-      router.push(`/${router.query.redirect}`);
-    }else{
-       
-      router.push("/admin/articles");
-    }
-    
-  }
-}, [updateArticleSuccess])
+
 
   const handleFormSubmit = async (values) => {
+    setLoading(true)
     if(file){
-    let uploadAvatar = await  firebaseStorage
-    .ref(
-      `/Article Documents/` +
-        file.name
-    )
-    .put(file);
-    let downloadAvatar = await (await uploadAvatar).ref.getDownloadURL();
-    values.avatar=downloadAvatar
-    }else 
-  values.avatar=null
+
+      const avatarUrl= await uploadImageFirebase(file,`Article`)
+        values.avatar=avatarUrl
+      }
     
     try {
       let {_id,created_by,createdAt,updatedAt, ...rest}=values
@@ -105,14 +99,12 @@ useEffect(() => {
      rest= Object.entries(rest).reduce((a,[k,v]) => (v ? (a[k]=v, a) : a), {})
       await dispatch(updateArticle(_id ,rest))
     } catch (e) {
+      setLoading(false)
       console.log("got error", e)
         setFoundError(e.message)
         
     }
   };
-//   const {
-//     query: { id },
-//   } = useRouter();
 
 
   return (
@@ -165,23 +157,20 @@ useEffect(() => {
                   </Grid>
                   <Grid item md={6} xs={12}>
                     <TextField
-                      name="description"
-                      label="Description"
+                      name="article_avatar"
+                      label="Cover  Image"
                       fullwidth
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.description || ""}
-                      errorText={touched.description && errors.description}
+                      accept="image/png, image/gif, image/jpeg"
+                      type="file"
+                      // onBlur={handleBlur}
+                      onChange={(a) => {
+                        setFile(a.target.files[0])
+                        handleChange(a)
+                      }}
+                      value={values.article_avatar}
+                      errorText={touched.article_avatar && errors.article_avatar}
                     />
                   </Grid>
-
-                  <Grid item xs={12}>
-                  <DropZone
-                    onChange={(files) => {
-                      console.log(files);
-                    }}
-                  />
-                </Grid>
                 <Grid item xs={12}>
                   <TextArea
                     name="description"
@@ -195,39 +184,24 @@ useEffect(() => {
                     errorText={touched.description && errors.description}
                   />
                 </Grid>
-                  <Grid item md={6} xs={12}>
+                
+                  {/* <Grid item md={6} xs={12}>
                     <TextField
-                      name="content"
+                      name="tags"
                       label="tags"
                       fullwidth
                       onBlur={handleBlur}
                       onChange={handleChange}
-                      value={values.content || ""}
+                      value={values.tags || ""}
                       errorText={touched.content && errors.content}
                     />
-                  </Grid>
-                  <Grid item md={6} xs={12}>
-                    <TextField
-                      name="article_avatar"
-                      label="Cover  Image"
-                      fullwidth
-                      accept="image/png, image/gif, image/jpeg"
-                      type="file"
-                      // onBlur={handleBlur}
-                      onChange={(a) => {
-                        console.log(a.target.files[0])
-                        setFile(a.target.files[0])
-                        handleChange(a)
-                      }}
-                      value={values.article_avatar}
-                      errorText={touched.article_avatar && errors.article_avatar}
-                    />
-                  </Grid>
+                  </Grid> */}
+                 
                 </Grid>
               </Box>
 
-              <Button type="submit" variant="contained" color="primary" disabled={!content || updateArticleloading}>
-                {updateArticleloading ? <Spinner /> : "Create Article"}
+              <Button type="submit" variant="contained" color="primary" disabled={!content || loading}>
+                {loading? <Spinner /> : "Update Article"}
                 
               </Button>
             </form>

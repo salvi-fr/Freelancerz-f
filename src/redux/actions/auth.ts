@@ -1,5 +1,6 @@
 // import axios from 'axios'
 import axios from "lib/http/client";
+import {  toast } from 'react-toastify';
 import {
     LOGIN_AUTH_SUCCESS,
     LOGIN_AUTH_LOADING,
@@ -52,6 +53,11 @@ export const RefreshToken = () => (dispatch) => {
             payload: {auth:res.data},
         })
     }).catch(function (error) {
+        console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: REFRESH_AUTH_FAILED, 
             payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
@@ -65,6 +71,11 @@ export const Signup = (data:SignupType) => (dispatch) => {
             payload: {auth:res.data},
         })
     }).catch(function (error) {
+        console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: SIGNUP_AUTH_FAILED, 
             payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"} })
       });

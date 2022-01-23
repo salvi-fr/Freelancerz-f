@@ -1,4 +1,5 @@
 import axios from "lib/http/client";
+import {  toast } from 'react-toastify';
 
 import {
     GET_STATS_SUCCESS
@@ -16,6 +17,11 @@ export const getStats = () => (dispatch) => {
             payload: {stats:res.data.data},
         })
     }).catch(function (error) {
+        console.log(error);
+        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        toast.error(er, {
+            icon: "🚀"
+          });
         dispatch ({ type: GET_STATS_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
       });
 }

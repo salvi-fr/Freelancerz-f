@@ -118,8 +118,8 @@ const ProductFilterCard = () => {
 
       <H6 mb="16px">Colors</H6>
       <FlexBox mb="1rem">
-        {colorList.map((item) => (
-          <Avatar bg={item} size={25} mr="10px" style={{ cursor: "pointer" }} />
+        {colorList.map((item,key) => (
+          <Avatar bg={item} size={25} mr="10px" style={{ cursor: "pointer" }} key={key}/>
         ))}
       </FlexBox>
     </Card>

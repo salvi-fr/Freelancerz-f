@@ -22,19 +22,19 @@ const Categories: React.FC = () => {
   }, [width]);
 
   return (
-    <Container
+    <Container mb="2rem"
     >
 
 <H3 textAlign="center" fontSize="25px" mb="2rem" lineHeight="1.2">
         Our Partners 
       </H3>
-      <Box my="-0.25rem" >
+      <Box my="-0.25rem"  >
         <Carousel totalSlides={9} visibleSlides={visibleSlides}>
           {partnersDatabase.map((item, ind) => (
             <Box py="0.25rem" key={ind}>
               <Card p="1rem">
                 <Link href={item.webUrl}>
-                  <a target="_blank" href={item.webUrl}>
+                  <a target="_blank" href={item.webUrl} rel="noreferrer">
                     <HoverBox borderRadius={8} mb="0.5rem">
                       <LazyImage
                         src={item.imgUrl}

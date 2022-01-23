@@ -24,19 +24,19 @@ const Favorite: React.FC<FavoriteProps> = ({
       viewBox="0 0 24 24"
       fill={`url(#star-${id})`}
       stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className="feather feather-star"
       {...props}
     >
       <defs>
         <linearGradient id={`star-${id}`}>
-          <stop offset={value / outof} stop-color={colors[color].main} />
+          <stop offset={value / outof} stopColor={colors[color].main} />
           <stop
             offset={value / outof}
-            stop-color={colors.body.paper}
-            stop-opacity="1"
+            stopColor={colors.body.paper}
+            stopOpacity="1"
           />
         </linearGradient>
       </defs>

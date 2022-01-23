@@ -17,7 +17,7 @@ const ArticlesCard: React.FC<AllProps> = ({articles}) => {
     <CategorySectionCreator>
       <Grid container spacing={6} >
       {articles.map((item, ind) => (
-        <Grid item  xs={12} md={4}  sm={6} xl={3} index={ind}>
+        <Grid item  xs={12} md={4}  sm={6} xl={3} key={ind}>
       <ArticleCard item={item }/>
         </Grid>
          ))}

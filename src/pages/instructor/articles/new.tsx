@@ -19,6 +19,7 @@ import RichTextEditor from '@component/RichTextEditor/RichTextEditor'
   import firebaseStorage from "lib/firebaseCloudStorage";
   import Spinner from "@component/Spinner";
 import TextArea from "@component/textarea/TextArea";
+import { ToastContainer } from "react-toastify";
 
 const NewArticle = () => {
     const router = useRouter();
@@ -180,7 +181,8 @@ useEffect(() => {
             </form>
           )}
         </Formik>
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

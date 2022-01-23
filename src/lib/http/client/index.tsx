@@ -1,6 +1,6 @@
 import axios from "axios";
 const axiosInstance = axios.create({
-  baseURL:process.env.NEXT_PUBLIC_BACKEND_URL || "https://healthedu-b.herokuapp.com",
+  baseURL:process.env.NEXT_PUBLIC_BACKEND_URL,
 });
 
 axiosInstance.interceptors.request.use(
@@ -32,6 +32,9 @@ axiosInstance.interceptors.response.use(
       if (error?.response?.status === 401) {
         localStorage.removeItem("accessToken");
         window.location.href = "/refresh";
+      }
+      if (error?.response?.status === 403) {
+        error:error.response.data.message="You are not authorized to perform this action"
       }
     }
     return Promise.reject(error);

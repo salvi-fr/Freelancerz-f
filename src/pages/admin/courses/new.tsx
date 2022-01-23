@@ -9,9 +9,8 @@ import { Formik } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useDispatch } from 'react-redux'
-import { useSelector } from 'utils/utils'
+import { uploadImageFirebase, useSelector } from 'utils/utils'
 import React, { useState, useRef, useEffect } from "react";
-import firebaseStorage from "lib/firebaseCloudStorage";
 import * as yup from "yup";
 import Spinner from "@component/Spinner";
 import {
@@ -26,29 +25,46 @@ import {
 import Select from "@component/Select";
 import MultipleSelect from '@component/multipleSelect';
 import RichTextEditor from '@component/RichTextEditor/RichTextEditor'
-import DropZone from "@component/DropZone";
+import { toast, ToastContainer } from "react-toastify";
 import TextArea from "@component/textarea/TextArea";
 
 const CourseEditor = () => {
   const router = useRouter();
   const dispatch = useDispatch()
-
-  //   const { roles=null}= useSelector((state) => state.role)
   const { modules: mModules = null } = useSelector((state) => state.module)
   const { categories = null } = useSelector((state) => state.category)
-
-  const { error: categoryError = null } = useSelector((state) => state.category)
-  const { error: moduleError = null } = useSelector((state) => state.module)
-  // const {refreshAuthloading=false}= useSelector((state) => state.auth)
-  // const {refreshAuthSuccess=false}= useSelector((state) => state.auth)
-  const { createCourseloading = false } = useSelector((state) => state.course)
-  const { signupAuthSuccess = false } = useSelector((state) => state.auth)
-  //   const {error:authError=null}= useSelector((state) => state.auth)
   const firstUpdate = useRef(true);
-  const [foundError, setFoundError] = useState(null)
   const [categoriesData, setCategoriesData] = useState([])
   const [modulesData, setModulesData] = useState([])
-  console.log(foundError)
+  const { error: courseError = null } = useSelector((state) => state.course)
+  const {createCourseSuccess=false, createCourseFailed=false}= useSelector((state) => state.course)
+  const [loading , setLoading]= useState(false)
+  useEffect(() => {
+    if(createCourseFailed && loading){
+      toast.error(courseError, {
+        icon: "😨"
+      });
+      setLoading(false)  
+      router.reload()
+    }
+  }, [createCourseFailed])
+useEffect(() => {
+  if(createCourseSuccess && loading){
+    toast.success("successfully updated", {
+      icon: "🚀",
+      position: "top-right",
+autoClose: 5000
+    });
+    setLoading(false)
+    if(router.query.redirect){
+      
+      router.push(`/${router.query.redirect}`);
+    }else{
+      router.push("/admin/courses");
+    }
+    
+  }
+}, [createCourseSuccess,loading])
 
   const [file, setFile] = useState(null)
   useEffect(() => {
@@ -60,10 +76,7 @@ const CourseEditor = () => {
     null
   )
   useEffect(() => {
-    if (categoryError && !firstUpdate.current) {
-      setFoundError(categoryError)
-    }
-    else if (categories && categories.data) {
+    if (categories && categories.data) {
       setCategoriesData([])
       categories.data.map((item) => {
         setCategoriesData((prevState) => [...prevState, { value: item._id, label: item.title }]);
@@ -72,54 +85,35 @@ const CourseEditor = () => {
   }, [categories])
 
   useEffect(() => {
-    if (moduleError && !firstUpdate.current) {
-      setFoundError(moduleError)
-    }
-    else if (mModules && mModules.data) {
+    if (mModules && mModules.data) {
       setModulesData([])
       mModules.data.map((item) => {
         setModulesData((prevState) => [...prevState, { value: item._id, label: item.title }]);
       })
     }
   }, [mModules])
-  useEffect(() => {
-    if (signupAuthSuccess) {
-      if (router.query.redirect) {
-        router.push(`/${router.query.redirect}`);
-      } else {
-        router.push("/");
-      }
-
-    }
-  }, [signupAuthSuccess])
 
   const handleFormSubmit = async (values) => {
     try {
-      let uploadAvatar = await firebaseStorage
-        .ref(
-          `/Courses Documents/${values.title} /` +
-          file.name
-        )
-        .put(file);
-      let downloadAvatar = await (await uploadAvatar).ref.getDownloadURL();
+      setLoading(true)
+      if(file){
 
+        const avatarUrl= await uploadImageFirebase(file,`Course`)
+          values.avatar=avatarUrl
+        }
       values.curriculum = curriculum
-      values.avatar = downloadAvatar
       values.modules = values.course_modules.map((item) => { return item.value })
       values.category = values.course_category.value
       const { course_avatar, course_modules, course_category, ...rest } = values
       await dispatch(createCourse(rest))
-      router.push("/admin/courses");
+      
     } catch (e) {
+      setLoading(false)
       console.log("got error", e)
-      setFoundError(e.message)
+      
 
     }
   };
-
-  //   const {
-  //     query: { id },
-  //   } = useRouter();
 
 
   return (
@@ -240,14 +234,15 @@ const CourseEditor = () => {
                 </Grid>
               </Box>
 
-              <Button type="submit" variant="contained" color="primary" disabled={!curriculum || createCourseloading}>
-                {createCourseloading && <Spinner />}
+              <Button type="submit" variant="contained" color="primary" disabled={!curriculum || loading}>
+                {loading && <Spinner />}
                 Create Course
               </Button>
             </form>
           )}
         </Formik>
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

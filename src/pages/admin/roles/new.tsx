@@ -16,6 +16,7 @@ import Spinner from "@component/Spinner";
 import {
   createRole
 } from 'redux/actions/role'
+import { ToastContainer } from "react-toastify";
 import MultipleSelect from '@component/multipleSelect';
 import { getPermissions } from "@redux/actions/permission";
 
@@ -144,7 +145,8 @@ const RoleEditor = () => {
             </form>
           )}
         </Formik>
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

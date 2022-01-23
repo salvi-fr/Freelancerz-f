@@ -1,4 +1,4 @@
-export default [
+ const testimonial = [
     {
         name: "Ashimwe Amicale",
         imgUrl: "/assets/health/testimonial/ashimwe-amicale.jpg",
@@ -26,3 +26,5 @@ export default [
     
 
   ];
+
+  export default testimonial;

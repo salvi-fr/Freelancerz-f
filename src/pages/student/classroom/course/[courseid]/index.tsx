@@ -36,22 +36,14 @@ const EditCourse = () => {
   const [courseNavigations, setCourseNavigations] = useState([])
   const firstUpdate = useRef(true);
 
-
-
   useEffect(() => {
-    console.log(loading)
-    setLoading(true)
-    if (!courseid) {
-      router.push("/student/classroom")
-    }else if(!fechedCourse || fechedCourse._id !== courseid){
     dispatch(getCourse(courseid as string))
-    firstUpdate.current = false}
   }, [dispatch])
 
   useEffect(() => {
 
     if (fechedCourse) {
-      console.log("just got some courses ")
+      console.log("just got some courses ", fechedCourse)
       const cm = fechedCourse?.modules ? fechedCourse.modules as IModule[] : [];
       if (cm && cm.length) {
         var courseNavs = cm.map((module, index) => {

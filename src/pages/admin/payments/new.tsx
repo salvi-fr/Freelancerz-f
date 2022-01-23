@@ -15,11 +15,12 @@ import {useSelector} from '@utils/utils'
   import {
     createPayment
   } from 'redux/actions/payment'
-
+  import { ToastContainer, toast } from 'react-toastify';
   import {getOpenCourses} from '@redux/actions/course'
   import {getUsers} from '@redux/actions/user'
 
 import Select from "@component/Select";
+import "react-toastify/dist/ReactToastify.css";
 import DropZone from "@component/DropZone";
 import TextArea from "@component/textarea/TextArea";
 const NewPayment = () => {
@@ -238,8 +239,8 @@ useEffect(() => {
             </form>
           )}
         </Formik>
-      </Card1>
-      
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

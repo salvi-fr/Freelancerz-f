@@ -37,9 +37,9 @@ const EditQuiz = () => {
   const { error: quizError = null } = useSelector((state) => state.quiz)
   const { quiz: fechedQuiz = null } = useSelector((state) => state.quiz)
 
-  const { updateQuizSuccess = false } = useSelector((state) => state.quiz)
+  const { updateQuizSuccess = false,updateQuizFailed=false } = useSelector((state) => state.quiz)
   const [quizMock, setQuizMock] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [quizAnswers, setQuizAnswers] = useState([])
   const [quizNewAnswer, setQuizNewAnswer] = useState("")
   const [type, setType] = useState('')
@@ -50,6 +50,26 @@ const EditQuiz = () => {
     dispatch(getQuiz(id as string))
     firstUpdate.current = false
   }, [dispatch])
+
+  useEffect(() => {
+    if(updateQuizFailed && loading){
+      setLoading(false)  
+      router.reload()
+    }
+  }, [updateQuizFailed])
+
+useEffect(() => {
+  if(updateQuizSuccess && loading){
+    setLoading(false)
+    if(router.query.redirect){
+      
+      router.push(`/${router.query.redirect}`);
+    }else{
+      router.push("/admin/quizzes");
+    }
+    
+  }
+}, [updateQuizSuccess])
   useEffect(() => {
     if (quizError && !firstUpdate.current) {
       setFoundError(quizError)
@@ -59,22 +79,11 @@ const EditQuiz = () => {
   useEffect(() => {
     if (fechedQuiz) {
       setQuizMock({ ...fechedQuiz, quiz_type: quizTypes.find(type => type.value === fechedQuiz.type) })
-      setLoading(false)
       setQuizAnswers(fechedQuiz.answers)
       setType(fechedQuiz.type)
     }
   }, [fechedQuiz])
 
-  useEffect(() => {
-    if (updateQuizSuccess && !loading) {
-      if (router.query.redirect) {
-        router.push(`/${router.query.redirect}`);
-      } else {
-        router.push("/admin/quizzes");
-      }
-
-    }
-  }, [updateQuizSuccess])
   const handleAnswerSubmit = async () => {
     try {
       setQuizAnswers([...quizAnswers, { answer: quizNewAnswer, is_answer: false }])
@@ -119,12 +128,14 @@ const EditQuiz = () => {
   }
   const handleFormSubmit = async (values) => {
     try {
+      setLoading(true)
       const { title, description, activated } = values;
       const quiz = { title, description, type, activated, answers: quizAnswers }
       values.answers = quizAnswers
 
       await dispatch(updateQuiz(id as string, quiz))
     } catch (e) {
+      setLoading(false)
       console.log("got error", e)
       setFoundError(e.message)
 
@@ -147,7 +158,7 @@ const EditQuiz = () => {
       />
 
       <Card1>
-        {loading ? <p>Loading</p> :
+        {!quizMock ? <p>Loading</p> :
 
           <Formik
             initialValues={quizMock}
@@ -314,10 +325,11 @@ const EditQuiz = () => {
                   </Box>
                 </Box>
 
-                <Button type="submit" variant="contained" color="primary" disabled={!quizAnswers.length} onClick={() => {
+                <Button type="submit" variant="contained" color="primary" disabled={!quizAnswers.length || loading} onClick={() => {
                   handleFormSubmit(values)
                 }}>
-                  Save changes
+                  {loading? 'Loading...' : 'Save changes'}
+                  
                 </Button>
               </form>
             )}

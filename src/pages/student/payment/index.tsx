@@ -16,76 +16,52 @@ import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 // import { useRouter } from "next/router";
 import { useDispatch } from 'react-redux';
-import { deleteModule, getModules } from 'redux/actions/module';
+import { deletePayment, getPayments } from 'redux/actions/payment';
 import { useSelector } from 'utils/utils';
 
-const ModulesList = () => {
+const PaymentsList = () => {
      
-  const {modules=null}= useSelector((state) => state.module)
-  const {error:moduleError=null}= useSelector((state) => state.module)
-  const [modulesData, setCoursesData]= useState([])
+  const {payments=null}= useSelector((state) => state.payment)
+  const {error:paymentError=null}= useSelector((state) => state.payment)
+  const [paymentsData, setCoursesData]= useState([])
   const router = useRouter();
   const [id, setId]= useState(null)
   const [open, setOpen] = useState(false);
-  const handleDelete = async () => {
-    try {
-      await dispatch(deleteModule(id))
-      setOpen((open) => !open);
-      router.reload()
-    } catch (e) {
-  
-      console.log("got error", e,foundError)
-        setFoundError(e.message)
-        
-    }
-    
-  }
-   
-  
-    const toggleDialog = useCallback(() => {
-      setOpen((open) => !open);
-    }, []);
+
+
   const [foundError,setFoundError]= useState(null)
   const firstUpdate = useRef(true);
   const dispatch = useDispatch()
   console.log(foundError)
   useEffect(() => {
-    dispatch(getModules())
+    dispatch(getPayments())
     firstUpdate.current = false
   }, [dispatch])
   useEffect(() => {
-    if(moduleError && !firstUpdate.current){
-      setFoundError(moduleError)
+    if(paymentError && !firstUpdate.current){
+      setFoundError(paymentError)
     }
     
-  }, [moduleError])
+  }, [paymentError])
   
   useEffect(() => {
-    if (modules && modules.data) {
-      setCoursesData(modules.data)
+    if (payments && payments.data) {
+      setCoursesData(payments.data)
     }
     
-  }, [modules])
+  }, [payments])
 
   return (
     <div>
-      <DashboardPageHeader title="Modules" iconName="box"  from="Student"
-      button={
-        <Link href="/admin/modules/new">
-          <a>
-            <Button color="primary" bg="primary.light" px="2rem">
-              Create module
-            </Button>
-          </a>
-        </Link>}/>
-{modulesData && modulesData.length > 0?
+      <DashboardPageHeader title="Your Payments" iconName="box"  from="Student"/>
+{paymentsData && paymentsData.length > 0?
 <>
-      {modulesData.map((item,ind) => (
+      {paymentsData.map((item,ind) => (
         
           <TableRow
           key={ind}
             // as="a"
-            // href={`/admin/modules/${item._id}`}
+            // href={`/admin/payments/${item._id}`}
             my="1rem"
             padding="15px 24px"
           >
@@ -111,10 +87,10 @@ const ModulesList = () => {
             <Hidden flex="0 0 0 !important" down={769}>
             
               <Typography className="pre" textAlign="center" color="text.muted">
-            <Link href={`/admin/modules/edit/${item._id}`}>
+            {/* <Link href={`/admin/payments/edit/${item._id}`}>
               <Typography
                 as="a"
-                href={`/admin/modules/edit/${item._id}`}
+                href={`/admin/payments/edit/${item._id}`}
                 color="inherit"
               >
                 <IconButton size="small">
@@ -123,30 +99,19 @@ const ModulesList = () => {
                   </Icon>
                 </IconButton>
               </Typography>
-            </Link>
-            <IconButton size="small"
-             onClick={() => {
-              setId(item._id)
-              toggleDialog()
-            }}
-             >
-              <Icon variant="small" defaultcolor="currentColor">
-                delete
-              </Icon>
-            </IconButton>
-            <IconButton size="small">
+            </Link> */}
+       
+            {/* <IconButton size="small">
                   <Icon variant="small" defaultcolor="currentColor">
                     arrow-right
                   </Icon>
-                </IconButton>
+                </IconButton> */}
           </Typography>
             </Hidden>
           </TableRow>
        
       ))}
-      </>:<div className="text-center"> <H4>No modules found</H4></div>}
-      <DeleteModel open={open} onYes={handleDelete} onNo={toggleDialog} onClose={toggleDialog}
-      message="after deleting this module  you won't see it again "/>
+      </>:<div className="text-center"> <H4>No payments found</H4></div>}
       <FlexBox justifyContent="center" mt="2.5rem">
         <Pagination
           pageCount={5}
@@ -159,7 +124,7 @@ const ModulesList = () => {
   );
 };
 
-ModulesList.layout = StudentDashboardLayout;
+PaymentsList.layout = StudentDashboardLayout;
 
-export default ModulesList;
+export default PaymentsList;
 

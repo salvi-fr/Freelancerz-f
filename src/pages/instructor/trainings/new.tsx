@@ -20,6 +20,7 @@ import Spinner from "@component/Spinner";
   } from 'redux/actions/training'
 import DropZone from "@component/DropZone";
 import TextArea from "@component/textarea/TextArea";
+import { ToastContainer } from "react-toastify";
 
 const NewTraining = () => {
     const router = useRouter();
@@ -184,7 +185,8 @@ useEffect(() => {
             </form>
           )}
         </Formik>
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

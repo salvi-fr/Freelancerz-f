@@ -13,6 +13,7 @@ import React, { useState,useRef,useEffect } from "react";
 import { useDispatch } from 'react-redux'
 import {useSelector} from 'utils/utils'
 import * as yup from "yup";
+import { ToastContainer } from "react-toastify";
 import {
   getMe,updateUser
 } from 'redux/actions/user'
@@ -266,7 +267,8 @@ const AccountSettings = () => {
           )}
         </Formik>
         }
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

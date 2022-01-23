@@ -20,8 +20,8 @@ import {
 } from 'redux/actions/lecture'
 import MultipleSelect from "@component/multipleSelect";
 import { ILecture, IModuleLecture } from "types";
-import DropZone from "@component/DropZone";
 import TextArea from "@component/textarea/TextArea";
+import { toast } from "react-toastify";
 
 const EditModule = () => {
     const router = useRouter();
@@ -30,14 +30,40 @@ const EditModule = () => {
     query: { id },
   } = useRouter();
   const {error:moduleError=null}= useSelector((state) => state.module)
-  const {updateModuleSuccess=false}= useSelector((state) => state.module)
   const { lectures:mLectures=null}= useSelector((state) => state.lecture)
   const {module:mModule=null}= useSelector((state) => state.module)
   const [lecturesData, setLecturesData] = useState([])
   const firstUpdate = useRef(true);
-  const [foundError,setFoundError]= useState(null)
   const [moduleMock, setModuleMock]=useState(null)
-  const [loading , setLoading]= useState(true)
+
+  const {updateModuleSuccess=false, updateModuleFailed=false}= useSelector((state) => state.module)
+  const [loading , setLoading]= useState(false)
+  useEffect(() => {
+    if(updateModuleFailed && loading){
+      toast.error(moduleError, {
+        icon: "😨"
+      });
+      setLoading(false)  
+      router.reload()
+    }
+  }, [updateModuleFailed,loading])
+useEffect(() => {
+  if(updateModuleSuccess && loading){
+    toast.success("successfully updated", {
+      icon: "🚀",
+      position: "top-right",
+autoClose: 5000
+    });
+    setLoading(false)
+    if(router.query.redirect){
+      
+      router.push(`/${router.query.redirect}`);
+    }else{
+      router.push("/admin/modules");
+    }
+    
+  }
+}, [updateModuleSuccess,loading])
   useEffect(() => {
     dispatch(getLectures())
     dispatch(getModule(id as string))
@@ -55,51 +81,31 @@ const EditModule = () => {
                return  found._id as string == array_el.value;
             }).length == 0
          }):[],})
-         console.log("module mock",moduleMock)
-        setLoading(false)
+  
         }
     }, [mModule,mLectures])
   useEffect(() => {
-    if(moduleError && !firstUpdate.current){
-        setFoundError(moduleError)
-      }
-    else if (mLectures && mLectures.data) {
+  if (mLectures && mLectures.data) {
       setLecturesData([])
         mLectures.data.map((item) => {
         setLecturesData((prevState) => [...prevState, { value: item._id, label: item.title }]);
         })
     }
-    console.log("found lectures",lecturesData)
   }, [mLectures])
-  console.log(foundError)
-  useEffect(() => {
-    if(moduleError && !firstUpdate.current){
-        setFoundError(moduleError)
-      }
-  }, [moduleError])
 
-useEffect(() => {
-  if(updateModuleSuccess){
-    if(router.query.redirect){
-      router.push(`/${router.query.redirect}`);
-    }else{
-      router.push("/admin/modules");
-    }
-    
-  }
-}, [updateModuleSuccess])
   
 
 
   const handleFormSubmit = async (values) => {
     try {
+      setLoading(true)
       let {_id,created_by,createdAt,updatedAt, ...rest}=values
       rest.lectures=rest.lectures.map((item,ind)=>{return {lecture:item.value,rank:ind}})
     
       await dispatch(updateModule(id as string,rest))
     } catch (e) {
+      setLoading(false)
       console.log("got error", e)
-        setFoundError(e.message)
         
     }
   };
@@ -110,14 +116,14 @@ useEffect(() => {
         iconName="edit"
         title="New Course Module" from="Admin"
         button={
-          <Link href="/admin/events">
+          <Link href="/admin/modules">
             <Button color="primary" bg="primary.light" px="2rem">
               Back to Modules
             </Button>
           </Link>
         }
       />
-{!moduleMock || loading? <p>Loading</p>:
+{!moduleMock?  <p>Loading</p>:
       <Card1>
      
 
@@ -178,8 +184,8 @@ useEffect(() => {
                 </Grid>
               </Box>
 
-              <Button type="submit" variant="contained" color="primary" >
-                Create Module
+              <Button type="submit" variant="contained" color="primary" disabled={loading} >
+                {loading? "Updating...": "Update"}
               </Button>
             </form>
           )}

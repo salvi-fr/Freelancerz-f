@@ -18,6 +18,7 @@ import {useSelector} from 'utils/utils'
 import {
   getComplains,deleteComplain
 } from 'redux/actions/complain'
+import { ToastContainer } from "react-toastify";
 import { useRouter } from "next/router";
 import DeleteModel from "@component/modal/DeleteModel";
 import { IComplain } from "types";
@@ -172,6 +173,7 @@ useEffect(() => {
             }} />
           </FlexBox>
       </>:<div className="text-center"> <H4>No complains found</H4></div>}
+      <ToastContainer autoClose={2000} />
       <DeleteModel open={open} onYes={handleDelete} onNo={toggleDialog} onClose={toggleDialog}
       message="after deleting this complain  you won't see it again "/>
      

@@ -55,8 +55,8 @@ const MegaMenu3: React.FC<MegaMenuProps> = ({
                   ) : (
                     <SemiSpan className="title-link">{item.title}</SemiSpan>
                   )}
-                  {item.subCategories?.map((sub) => (
-                    <NavLink className="child-link" href={sub.href}>
+                  {item.subCategories?.map((sub,key) => (
+                    <NavLink className="child-link" href={sub.href} key={key}>
                       {sub.title}
                     </NavLink>
                   ))}

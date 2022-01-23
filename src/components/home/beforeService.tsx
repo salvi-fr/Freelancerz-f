@@ -44,7 +44,7 @@ const BeforeService: React.FC<WelcomeProps> = () => {
           Learn anytime with full access. Choose from thousands of expert-led courses now
         </H4>
 
-          <Link href="/dashboard">
+          <Link href="/courses/all">
             <a>
             <Button
           className="button-link"
@@ -52,7 +52,7 @@ const BeforeService: React.FC<WelcomeProps> = () => {
           color="primary"
           p="1rem 1.5rem"
         >
-           View more courses
+           View all courses
         </Button>
             </a>
           </Link>

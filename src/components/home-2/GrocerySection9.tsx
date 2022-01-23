@@ -20,8 +20,8 @@ const GrocerySection9: React.FC = () => {
           arrowButtonColor="inherit"
           showArrowOnHover={true}
         >
-          {cardList.map((_item) => (
-            <Box p="0.25rem">
+          {cardList.map((_item,ind) => (
+            <Box p="0.25rem"key={ind}>
               <Card className="carousel-card">
                 <FlexBox
                   className="quote-content"
@@ -37,7 +37,7 @@ const GrocerySection9: React.FC = () => {
                   <Box maxWidth="410px">
                     <Span color="gray.700">
                       Satisfied by their professionalism ! Got my tea bags in
-                      time. Didn't have to pay any delivery charge. I can't
+                      time. Didnt have to pay any delivery charge. I cant
                       believe that. Keep it up !
                     </Span>
                     <H5 mt="0.5rem" fontWeight="700">

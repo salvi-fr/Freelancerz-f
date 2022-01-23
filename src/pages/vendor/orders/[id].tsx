@@ -121,7 +121,7 @@ const OrderDetails = () => {
 
           <Card p="20px 30px">
             <H5 mt="0px" mb="14px">
-              Customer's Note
+              Customers Note
             </H5>
             <TextArea
               defaultValue="Please deliver ASAP."

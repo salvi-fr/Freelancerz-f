@@ -13,34 +13,38 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from 'react-redux';
-import { getCourses, setCourse } from 'redux/actions/course';
+import { getOpenCourses, setCourse } from 'redux/actions/course';
 import { useSelector } from 'utils/utils';
+import { toast } from "react-toastify";
 const CoursesList = () => {
   const router = useRouter();
   const { courses = null } = useSelector((state) => state.course)
-  const { error: courseError = null } = useSelector((state) => state.course)
+  const { error: courseError = null,getCoursesFailed=false } = useSelector((state) => state.course)
   const [coursesData, setCoursesData] = useState([])
   const [foundError, setFoundError] = useState(null)
   const firstUpdate = useRef(true);
+  const [loading , setLoading]= useState(false)
   const dispatch = useDispatch()
   useEffect(() => {
-    dispatch(getCourses())
-    firstUpdate.current = false
+    setLoading(true)
+    dispatch(getOpenCourses())
   }, [dispatch])
-  console.log(foundError)
   useEffect(() => {
-    if (courseError && !firstUpdate.current) {
-      setFoundError(courseError)
+    if( getCoursesFailed && loading){
+      toast.error(courseError, {
+        icon: "😨"
+      });
+      setLoading(false)  
+      // router.reload()
     }
+  }, [ getCoursesFailed])
 
-  }, [courseError])
+// const GoToCourse= async (id)=>{
+//   let course = coursesData.find(course=>course._id===id)
+//   await dispatch(setCourse(course))
+//   router.push('/student/classroom/course/[id]',`/student/classroom/course/${id}`)
 
-const GoToCourse= async (id)=>{
-  let course = coursesData.find(course=>course._id===id)
-  await dispatch(setCourse(course))
-  router.push('/student/classroom/course/[id]',`/student/classroom/course/${id}`)
-
-}
+// }
 
 
   useEffect(() => {
@@ -96,23 +100,22 @@ const GoToCourse= async (id)=>{
 
               <Typography className="pre" textAlign="center" color="text.muted">
 
-                {/* <Link href={`/student/classroom/course/${item._id}`} >
+                <Link href={`/student/classroom/course/${item._id}`} >
                   <a>
                     <Button color="primary" bg="primary.light" px="2rem">
                       {item.activated ? "Program home" : "Continue Leeraning "}
                     </Button>
                   </a>
-                </Link> */}
+                </Link>
 
                
-                    <Button color="primary" bg="primary.light" px="2rem" 
+                    {/* <Button color="primary" bg="primary.light" px="2rem" 
                      onClick={() => {
                       GoToCourse(item._id)
                     }}
-                    // onClick={GoToCourse(item._id)}
                     >
                       {item.activated ? "Program home" : "Continue Leeraning "}
-                    </Button>
+                    </Button> */}
                   
               </Typography>
             </Hidden>

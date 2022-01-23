@@ -27,6 +27,7 @@ import {
   import {
     getTrainings
   } from 'redux/actions/training'
+  import { toast, ToastContainer } from "react-toastify";
 import MultipleSelect from '@component/multipleSelect';
 import DropZone from "@component/DropZone";
 
@@ -36,15 +37,40 @@ const CourseEditor = () => {
   const { trainings:mTrainings=null}= useSelector((state) => state.training)
   const { events:mEvents=null}= useSelector((state) => state.event)
   const { courses:mCourses=null}= useSelector((state) => state.course)
-
-  const {createPromoloading=false}= useSelector((state) => state.promo)
-  const {createPromoSuccess=false}= useSelector((state) => state.promo)
   const firstUpdate = useRef(true);
   const [foundError,setFoundError]= useState(null)
   const [coursesData,setCoursesData]= useState([])
   const [trainingsData,setTrainingsData]= useState([])
   const [eventsData,setEventsData]= useState([])
- 
+  const { error: courseError = null } = useSelector((state) => state.course)
+  const {createPromoSuccess=false, createPromoFailed=false}= useSelector((state) => state.promo)
+  const [loading , setLoading]= useState(false)
+  useEffect(() => {
+    if(createPromoFailed && loading){
+      toast.error(courseError, {
+        icon: "😨"
+      });
+      setLoading(false)  
+      router.reload()
+    }
+  }, [createPromoFailed])
+useEffect(() => {
+  if(createPromoSuccess && loading){
+    toast.success("successfully created", {
+      icon: "🚀",
+      position: "top-right",
+autoClose: 5000
+    });
+    setLoading(false)
+    if(router.query.redirect){
+      
+      router.push(`/${router.query.redirect}`);
+    }else{
+      router.push("/admin/promos");
+    }
+    
+  }
+}, [createPromoSuccess,loading])
   console.log(foundError)
   useEffect(() => {
   dispatch(getEvents())
@@ -81,18 +107,9 @@ const CourseEditor = () => {
     }
   }, [mEvents])
 
-useEffect(() => {
-  if(createPromoSuccess){
-    if(router.query.redirect){
-      router.push(`/${router.query.redirect}`);
-    }else{
-      router.push("/admin/promos");
-    }
-    
-  }
-}, [createPromoSuccess])
 
   const handleFormSubmit = async (values) => {
+    setLoading(true)
     try {
       console.log(values)
       values.trainings=values.promo_trainings? values.promo_trainings.map((item)=>{return item.value}): null
@@ -101,17 +118,13 @@ useEffect(() => {
       console.log(values)
       const  {promo_avatar,promo_events,promo_courses,promo_trainings,...rest}= values 
       await dispatch(createPromo(rest))
-      router.push("/admin/promos");
     } catch (e) {
+      setLoading(false)
       console.log("got error", e)
         setFoundError(e.message)
         
     }
   };
-
-//   const {
-//     query: { id },
-//   } = useRouter();
 
 
   return (
@@ -245,14 +258,15 @@ useEffect(() => {
                 </Grid>
               </Box>
 
-              <Button type="submit" variant="contained" color="primary" disabled={ createPromoloading }>
-              {createPromoloading && <Spinner  />}
+              <Button type="submit" variant="contained" color="primary" disabled={ loading }>
+              {loading && <Spinner  />}
                 Create Course
               </Button>
             </form>
           )}
         </Formik>
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

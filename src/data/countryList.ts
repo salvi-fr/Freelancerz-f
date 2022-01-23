@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default [
   { label: "Afghanistan", value: "AF" },
   { label: "Åland Islands", value: "AX" },

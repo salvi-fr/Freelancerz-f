@@ -20,6 +20,7 @@ import {
 import { useRouter } from "next/router";
 import DeleteModel from "@component/modal/DeleteModel";
 const limit =10
+import { ToastContainer } from "react-toastify";
 
 const CategoriesList = () => {
    
@@ -162,6 +163,7 @@ const toggleDialog = useCallback(() => {
             }} />
           </FlexBox>
       </> :<div className="text-center"> <H4>No category found</H4></div>}
+      <ToastContainer autoClose={2000} />
       <DeleteModel open={open} onYes={handleDelete} onNo={toggleDialog} onClose={toggleDialog}
       message="after deleting category you wont see it again "/>
       

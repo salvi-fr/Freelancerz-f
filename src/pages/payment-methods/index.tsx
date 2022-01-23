@@ -28,8 +28,8 @@ const AddressList = () => {
         }
       />
 
-      {orderList.map((item) => (
-        <TableRow my="1rem" padding="6px 18px">
+      {orderList.map((item,key) => (
+        <TableRow my="1rem" padding="6px 18px" key={key}>
           <FlexBox alignItems="center" m="6px">
             <Card width="42px" height="28px" mr="10px" elevation={4}>
               <img

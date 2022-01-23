@@ -25,13 +25,16 @@ import IconButton from "@component/buttons/IconButton";
 import Divider from "@component/Divider";
 import CheckBox from "@component/CheckBox";
 import Radio from "@component/radio/Radio";
+import Spinner from "@component/Spinner";
+import { ToastContainer } from "react-toastify";
 
 const NewQuiz = () => {
     const router = useRouter();
   const dispatch = useDispatch()
-
+  const [loading, setLoading] = useState(false)
   const {error:quizError=null}= useSelector((state) => state.quiz)
-  const {createQuizSuccess=false}= useSelector((state) => state.quiz)
+  const {createQuizSuccess=false,createQuizFailed=false}= useSelector((state) => state.quiz)
+
  const [quizAnswers, setQuizAnswers]=useState([])
  const [quizNewAnswer,setQuizNewAnswer]=useState("")
 const [type,setType]= useState('')
@@ -47,9 +50,17 @@ const [type,setType]= useState('')
   useEffect(() => {
 firstUpdate.current = true
   }, [dispatch])
+  console.log(foundError)
+  useEffect(() => {
+    if(createQuizFailed && loading){
+      setLoading(false)  
+      router.reload()
+    }
+  }, [createQuizFailed])
 
 useEffect(() => {
-  if(createQuizSuccess && !firstUpdate.current){
+  if(createQuizSuccess && loading){
+    setLoading(false)
     if(router.query.redirect){
       
       router.push(`/${router.query.redirect}`);
@@ -103,12 +114,13 @@ const handleRemoveAnswer= async (index)=>{
 }
   const handleFormSubmit = async (values) => {
     try {
+      setLoading(true)
       const { title,description } = values;
       const quiz = {title,description,type,answers:quizAnswers}
      values.answers=quizAnswers
       await dispatch(createQuiz(quiz))
     } catch (e) {
-
+      setLoading(false)
       console.log("got error", e,foundError)
         setFoundError(e.message)
         
@@ -117,6 +129,7 @@ const handleRemoveAnswer= async (index)=>{
 
   return (
     <div>
+      <ToastContainer autoClose={2000} />
       <DashboardPageHeader
         iconName="edit"
         title="New quiz"
@@ -300,7 +313,7 @@ const handleRemoveAnswer= async (index)=>{
               <Button type="submit" variant="contained" color="primary" disabled={!quizAnswers.length} onClick ={() => {
             handleFormSubmit(values)
           }}>
-                Create Quiz
+            {loading? <Spinner color="white" /> : "Create quiz"}
               </Button>
             </form>
           )}
@@ -308,6 +321,7 @@ const handleRemoveAnswer= async (index)=>{
         <Divider bg="gray.300" m="0.5rem" />
         
       </Card1>
+      
     </div>
   );
 };

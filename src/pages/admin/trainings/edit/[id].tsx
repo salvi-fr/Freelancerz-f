@@ -19,6 +19,7 @@ import DropZone from "@component/DropZone";
 import RichTextEditor from "@component/RichTextEditor/RichTextEditor";
 import TextArea from "@component/textarea/TextArea";
 import Spinner from "@component/Spinner";
+import { toast } from "react-toastify";
 
 const EditTraining  = () => {
   const router = useRouter();
@@ -29,26 +30,41 @@ const EditTraining  = () => {
   console.log(id)
   const {error:trainingError=null}= useSelector((state) => state.training )
   const {training :fechedTraining =null}= useSelector((state) => state.training )
-  const {updateTrainingSuccess=false}= useSelector((state) => state.training )
-  const {updateTrainingloading =false}= useSelector((state) => state.training )
-  const {getTrainingloading=false}= useSelector((state) => state.training )
   const [trainingMock, setTrainingMock]=useState(null)
-  const [loading , setLoading]= useState(true)
-
-  const firstUpdate = useRef(true);
   const [file,setFile]=useState(null)
-  const [foundError,setFoundError]= useState(null)
   const [content,setContent] = useState(null)
+
+  const { updateTrainingSuccess=false,  updateTrainingFailed=false}= useSelector((state) => state.training)
+const [loading , setLoading]= useState(false)
+useEffect(() => {
+  if( updateTrainingFailed && loading){
+    toast.error(trainingError, {
+      icon: "😨"
+    });
+    setLoading(false)  
+    router.reload()
+  }
+}, [ updateTrainingFailed])
+useEffect(() => {
+if( updateTrainingSuccess && loading){
+  toast.success("successfully updated", {
+    icon: "🚀",
+    position: "top-right",
+autoClose: 5000
+  });
+  setLoading(false)
+  if(router.query.redirect){
+    
+    router.push(`/${router.query.redirect}`);
+  }else{
+    router.push("/admin/trainings");
+  } 
+}
+}, [ updateTrainingSuccess,loading])
+
   useEffect(() => {
     dispatch(getTraining (id as string ))
-    firstUpdate.current = false
   }, [dispatch])
-  useEffect(() => {
-    if(trainingError && !firstUpdate.current){
-        setFoundError(trainingError)
-      }
-      console.log(foundError)
-  }, [trainingError])
 
   useEffect(() => {
     if(fechedTraining ){
@@ -56,24 +72,11 @@ const EditTraining  = () => {
         happen_from:fechedTraining.happen_from? new Date(fechedTraining.happen_from).toISOString().substring(0, 16):null,
         happen_to:fechedTraining.happen_to?new Date(fechedTraining.happen_to).toISOString().substring(0, 16):null})
       setContent(fechedTraining .content)
-      setLoading(false)
       }
-      console.log(trainingMock)
-      setLoading(false)
   }, [fechedTraining ])
 
-useEffect(() => {
-  if(updateTrainingSuccess && !loading){
-    if(router.query.redirect){
-      router.push(`/${router.query.redirect}`);
-    }else{
-      router.push("/admin/trainings");
-    }
-    
-  }
-}, [updateTrainingSuccess])
-
   const handleFormSubmit = async (values) => {
+    setLoading(true)
     if(file){
       if(file){
         const avatarUrl= await uploadImageFirebase(file,`Publications`)
@@ -87,8 +90,8 @@ useEffect(() => {
      console.log('just about to update',rest)
       await dispatch(updateTraining (id as string,rest))
     } catch (e) {
+      setLoading(false)
       console.log("got error", e)
-        setFoundError(e.message)
         
     }
   };
@@ -109,7 +112,7 @@ useEffect(() => {
       />
 
       <Card1>
-      {loading || !trainingMock? <p>Loading</p>:
+      { !trainingMock? <p>Loading</p>:
       <div>
    <RichTextEditor
    content={content}
@@ -201,8 +204,8 @@ useEffect(() => {
                 
                 </Grid>
               </Box>
-              <Button type="submit" variant="contained" color="primary" disabled={!content || updateTrainingloading }>
-              {updateTrainingloading && <Spinner  />}
+              <Button type="submit" variant="contained" color="primary" disabled={!content || loading }>
+              {loading && <Spinner  />}
                 Update training
               </Button>
             </form>

@@ -2,6 +2,9 @@ module.exports = {
   devIndicators: {
     autoPrerender: false,
   },
+  env: {
+    customKey: 'my-value',
+  },
   images: {
     domains: ['via.placeholder.com',"**.**.**","cdn.pixabay.com","firebasestorage.googleapis.com"],
   },

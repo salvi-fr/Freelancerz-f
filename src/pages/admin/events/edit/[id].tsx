@@ -15,40 +15,55 @@ import * as yup from "yup";
   import {
     updateEvent,getEvent
   } from 'redux/actions/event'
-  import firebaseStorage from "lib/firebaseCloudStorage";
 import Spinner from "@component/Spinner";
 import RichTextEditor from '@component/RichTextEditor/RichTextEditor'
-import DropZone from "@component/DropZone";
 import TextArea from "@component/textarea/TextArea";
+import { toast } from "react-toastify";
 const EditEvent = () => {
     const router = useRouter();
   const dispatch = useDispatch()
  const {
     query: { id },
   } = useRouter();
-  console.log(id)
+ 
   const {error:eventError=null}= useSelector((state) => state.event)
   const {event:fechedEvent=null}= useSelector((state) => state.event)
-  const {updateEventSuccess=false}= useSelector((state) => state.event)
-  const {updateEventloading =false}= useSelector((state) => state.event)
-  const {getEventloading=false}= useSelector((state) => state.event)
   const [eventMock, setEventMock]=useState(null)
-  const [loading , setLoading]= useState(true)
-
   const firstUpdate = useRef(true);
   const [file,setFile]=useState(null)
-  const [foundError,setFoundError]= useState(null)
   const [content,setContent] = useState(null)
+  const { updateEventSuccess=false,  updateEventFailed=false}= useSelector((state) => state.event)
+const [loading , setLoading]= useState(false)
+useEffect(() => {
+  if( updateEventFailed && loading){
+    toast.error(eventError, {
+      icon: "😨"
+    });
+    setLoading(false)  
+    router.reload()
+  }
+}, [ updateEventFailed])
+useEffect(() => {
+if( updateEventSuccess && loading){
+  toast.success("successfully updated", {
+    icon: "🚀",
+    position: "top-right",
+autoClose: 5000
+  });
+  setLoading(false)
+  if(router.query.redirect){
+    
+    router.push(`/${router.query.redirect}`);
+  }else{
+    router.push("/admin/events");
+  } 
+}
+}, [ updateEventSuccess,loading])
+
   useEffect(() => {
+    console.log(id)
     dispatch(getEvent(id as string ))
-    firstUpdate.current = false
   }, [dispatch])
-  useEffect(() => {
-    if(eventError && !firstUpdate.current){
-        setFoundError(eventError)
-      }
-      console.log(foundError)
-  }, [eventError])
 
   useEffect(() => {
     if(fechedEvent){
@@ -56,23 +71,13 @@ const EditEvent = () => {
         happen_from:fechedEvent.happen_from? new Date(fechedEvent.happen_from).toISOString().substring(0, 16):null,
         happen_to:fechedEvent.happen_to?new Date(fechedEvent.happen_to).toISOString().substring(0, 16):null})
       setContent(fechedEvent.content)
-      setLoading(false)
       }
-      console.log(eventMock)
+      console.log("just fetched event",eventMock)
   }, [fechedEvent])
 
-useEffect(() => {
-  if(updateEventSuccess && !loading){
-    if(router.query.redirect){
-      router.push(`/${router.query.redirect}`);
-    }else{
-      router.push("/admin/events");
-    }
-    
-  }
-}, [updateEventSuccess])
 
   const handleFormSubmit = async (values) => {
+    setLoading(true)  
     if(file){
       if(file){
         const avatarUrl= await uploadImageFirebase(file,`Events`)
@@ -81,14 +86,12 @@ useEffect(() => {
       }
     try {
      let {_id,created_by,subscribers,createdAt,event_avatar,updatedAt, ...rest}=values
-     
      rest= Object.entries(rest).reduce((a,[k,v]) => (v ? (a[k]=v, a) : a), {})
      console.log('just about to update',rest)
       await dispatch(updateEvent(id as string,rest))
     } catch (e) {
       console.log("got error", e)
-        setFoundError(e.message)
-        
+      setLoading(false)  
     }
   };
 
@@ -107,7 +110,7 @@ useEffect(() => {
         }
       />
      <Card1>
-{loading || getEventloading?<Spinner/>:
+{!eventMock?<Spinner/>:
 <>
 <RichTextEditor
                 content={content}
@@ -197,8 +200,8 @@ useEffect(() => {
          </Grid>
        </Box>
 
-       <Button type="submit" variant="contained" color="primary" disabled= {!content || updateEventloading}>
-       {updateEventloading && <Spinner  />}
+       <Button type="submit" variant="contained" color="primary" disabled= {!content || loading}>
+       {loading && <Spinner  />}
          Update Event
        </Button>
      </form>

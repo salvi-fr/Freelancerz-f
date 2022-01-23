@@ -12,44 +12,53 @@ import { useDispatch } from 'react-redux'
 import {useSelector} from 'utils/utils'
 import React, { useState,useRef,useEffect } from "react";
 import * as yup from "yup";
+import { toast, ToastContainer } from "react-toastify";
 import RichTextEditor from '@component/RichTextEditor/RichTextEditor'
 import firebaseStorage from "lib/firebaseCloudStorage";
 import Spinner from "@component/Spinner";
   import {
     createTraining
   } from 'redux/actions/training'
-import DropZone from "@component/DropZone";
 import TextArea from "@component/textarea/TextArea";
 
 const NewTraining = () => {
     const router = useRouter();
   const dispatch = useDispatch()
-
   const {error:trainingError=null}= useSelector((state) => state.training)
-  const {createTrainingSuccess=false}= useSelector((state) => state.training)
-  const {createTrainingloading=false}= useSelector((state) => state.training)
  const [content, setContent] = useState(null)
  const [file,setFile]=useState(null)
-  const firstUpdate = useRef(true);
-  const [foundError,setFoundError]= useState(null)
-  console.log(foundError)
-  useEffect(() => {
-    if(trainingError && !firstUpdate.current){
-        setFoundError(trainingError)
-      }
-  }, [trainingError])
+
+  const { createTrainingSuccess=false,  createTrainingFailed=false}= useSelector((state) => state.training)
+const [loading , setLoading]= useState(false)
 useEffect(() => {
-  if(createTrainingSuccess){
-    if(router.query.redirect){
-      router.push(`/${router.query.redirect}`);
-    }else{
-      router.push("/admin/trainings");
-    }
-    
+  if( createTrainingFailed && loading){
+    toast.error(trainingError, {
+      icon: "😨"
+    });
+    setLoading(false)  
+    router.reload()
   }
-}, [createTrainingSuccess])
+}, [ createTrainingFailed])
+useEffect(() => {
+if( createTrainingSuccess && loading){
+  toast.success("successfully updated", {
+    icon: "🚀",
+    position: "top-right",
+autoClose: 5000
+  });
+  setLoading(false)
+  if(router.query.redirect){
+    
+    router.push(`/${router.query.redirect}`);
+  }else{
+    router.push("/admin/trainings");
+  } 
+}
+}, [ createTrainingSuccess,loading])
+
 
   const handleFormSubmit = async (values) => {
+    setLoading(true)
     if(file){
       let uploadAvatar = await  firebaseStorage
       .ref(
@@ -65,7 +74,7 @@ useEffect(() => {
       await dispatch(createTraining(values))
     } catch (e) {
       console.log("got error", e)
-        setFoundError(e.message)
+       setLoading(false)
         
     }
   };
@@ -177,14 +186,15 @@ useEffect(() => {
                 </Grid>
               </Box>
 
-              <Button type="submit" variant="contained" color="primary" disabled={!content || createTrainingloading }>
-              {createTrainingloading && <Spinner  />}
+              <Button type="submit" variant="contained" color="primary" disabled={!content || loading}>
+              {loading && <Spinner  />}
                 Creeate training
               </Button>
             </form>
           )}
         </Formik>
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

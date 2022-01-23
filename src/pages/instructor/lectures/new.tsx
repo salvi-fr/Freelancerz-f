@@ -23,6 +23,7 @@ import * as yup from "yup";
 
 import RichTextEditor from '@component/RichTextEditor/RichTextEditor'
 import Select from "@component/Select";
+import { ToastContainer } from "react-toastify";
 
 
 const NewLecture = () => {
@@ -169,7 +170,8 @@ useEffect(() => {
             </form>
           )}
         </Formik>
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

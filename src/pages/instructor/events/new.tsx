@@ -20,6 +20,7 @@ import TextArea from "@component/textarea/TextArea";
   } from 'redux/actions/event'
 import RichTextEditor from '@component/RichTextEditor/RichTextEditor'
 import DropZone from "@component/DropZone";
+import { ToastContainer } from "react-toastify";
 const NewEvent = () => {
     const router = useRouter();
   const dispatch = useDispatch()
@@ -182,7 +183,8 @@ useEffect(() => {
             </form>
           )}
         </Formik>
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

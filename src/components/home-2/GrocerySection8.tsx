@@ -33,8 +33,8 @@ const GrocerySection8: React.FC = () => {
           showArrowOnHover={true}
         >
           {productDatabase.slice(197, 206).map((item, ind) => (
-            <Box py="0.25rem" height="100%">
-              <ProductCard10 {...item} off={25} key={ind} />
+            <Box py="0.25rem" height="100%"key={ind}>
+              <ProductCard10 {...item} off={25}  />
             </Box>
           ))}
         </Carousel>

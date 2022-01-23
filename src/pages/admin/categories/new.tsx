@@ -17,7 +17,7 @@ import {
   createCategory
 } from 'redux/actions/categories'
 import TextArea from "@component/textarea/TextArea";
-
+import { ToastContainer } from "react-toastify";
 
 const CategoryEditor = () => {
   const router = useRouter();
@@ -147,7 +147,8 @@ const CategoryEditor = () => {
             </form>
           )}
         </Formik>
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

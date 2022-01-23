@@ -30,7 +30,7 @@ import {
 import MultipleSelect from "@component/multipleSelect";
 import Spinner from "@component/Spinner";
 import { ICourse, IEvent, ITraining } from "types";
-import DropZone from "@component/DropZone";
+import { toast } from "react-toastify";
 
 const EditPromo = () => {
     const router = useRouter();
@@ -38,27 +38,49 @@ const EditPromo = () => {
  const {
     query: { id },
   } = useRouter();
-  console.log(id)
   const {error:promoError=null}= useSelector((state) => state.promo)
   const {promo:fechedPromo=null}= useSelector((state) => state.promo)
-  const {updatePromoloading=false}= useSelector((state) => state.promo)
-  const {getPromoloading=false}= useSelector((state) => state.promo)
   const { trainings:mTrainings=null}= useSelector((state) => state.training)
   const { events:mEvents=null}= useSelector((state) => state.event)
   const { courses:mCourses=null}= useSelector((state) => state.course)
-  const {updatePromoSuccess=false}= useSelector((state) => state.promo)
   const [promoMock, setPromoMock]=useState(null)
-  const [loading , setLoading]= useState(true)
  const [coursesData,setCoursesData]= useState([])
  const [trainingsData,setTrainingsData]= useState([])
  const [eventsData,setEventsData]= useState([])
 
   const firstUpdate = useRef(true);
-  const [foundError,setFoundError]= useState(null)
-  
+  const { updatePromoSuccess=false,  updatePromoFailed=false}= useSelector((state) => state.promo)
+const [loading , setLoading]= useState(false)
+useEffect(() => {
+  if( updatePromoFailed && loading){
+    toast.error(promoError, {
+      icon: "😨"
+    });
+    setLoading(false)  
+    router.reload()
+  }
+}, [ updatePromoFailed])
+useEffect(() => {
+if( updatePromoSuccess && loading){
+  toast.success("successfully updated", {
+    icon: "🚀",
+    position: "top-right",
+autoClose: 5000
+  });
+  setLoading(false)
+  if(router.query.redirect){
+    
+    router.push(`/${router.query.redirect}`);
+  }else{
+    router.push("/admin/promos");
+  } 
+}
+}, [ updatePromoSuccess,loading])
   useEffect(() => {
     dispatch(getEvents())
-   
+    dispatch(getTrainings())
+    dispatch(getCourses())
+    dispatch(getPromo(id as string ))
     firstUpdate.current = false
   }, [dispatch])
 
@@ -69,18 +91,15 @@ const EditPromo = () => {
          setTrainingsData((prevState) => [...prevState, { value: item._id, label: item.title }]);
        })
    }
-   dispatch(getPromo(id as string ))
  }, [mTrainings])
 
  useEffect(() => {
-   
   if (mCourses && mCourses.data) {
    setCoursesData([])
      mCourses.data.map((item) => {
      setCoursesData((prevState) => [...prevState, { value: item._id, label: item.title }]);
      })
- }
- dispatch(getTrainings())
+ } 
 }, [mCourses])
 
 useEffect(() => {
@@ -90,14 +109,8 @@ useEffect(() => {
      setEventsData((prevState) => [...prevState, { value: item._id, label: item.title }]);
      })
  }
- dispatch(getCourses())
 }, [mEvents])
-  useEffect(() => {
-    if(promoError && !firstUpdate.current){
-        setFoundError(promoError)
-      }
-      console.log(foundError)
-  }, [promoError])
+
   useEffect(() => {
     if(fechedPromo){
       let pC = fechedPromo.courses? fechedPromo.courses as ICourse[]:[]
@@ -122,23 +135,12 @@ useEffect(() => {
         }).length == 0
      })
     })
-      setLoading(false)
       }
-      console.log('feched',promoMock,trainingsData)
-  }, [fechedPromo])
+  }, [fechedPromo,eventsData,trainingsData,coursesData])
 
-useEffect(() => {
-  if(updatePromoSuccess && !loading){
-    if(router.query.redirect){
-      router.push(`/${router.query.redirect}`);
-    }else{
-      router.push("/admin/promos");
-    }
-    
-  }
-}, [updatePromoSuccess])
 
  const handleFormSubmit = async (values) => {
+   setLoading(true)
     try {
       values.trainings=values.promo_trainings.map((item)=>{return item.value})
       values.courses=values.promo_courses.map((item)=>{return item.value})
@@ -150,9 +152,8 @@ useEffect(() => {
      rest= Object.entries(rest).reduce((a,[k,v]) => (v ? (a[k]=v, a) : a), {})
       await dispatch(updatePromo(id as string,rest))
     } catch (e) {
-      console.log("got error", e)
-        setFoundError(e.message)
-        
+      setLoading(false)
+      console.log("got error", e)  
     }
   };
 
@@ -169,7 +170,7 @@ useEffect(() => {
           </Link>
         }
       />
-      {loading || getPromoloading? <Spinner />: 
+      {!promoMock ?  <Spinner />: 
       <Card1>
         <Formik
           initialValues={promoMock}
@@ -288,8 +289,8 @@ useEffect(() => {
                 </Grid>
               </Box>
 
-              <Button type="submit" variant="contained" color="primary" disabled={ updatePromoloading }>
-              {updatePromoloading && <Spinner  />}
+              <Button type="submit" variant="contained" color="primary" disabled={ loading}>
+              {loading && <Spinner  />}
                 Update Promo 
               </Button>
             </form>

@@ -21,6 +21,7 @@ import {
 import { useRouter } from "next/router";
 import DeleteModel from "@component/modal/DeleteModel";
 import { IPayment } from "types";
+import { ToastContainer } from "react-toastify";
 const limit =10
 const PaymentsList = () => {
      
@@ -171,6 +172,7 @@ const PaymentsList = () => {
             }} />
           </FlexBox>
       </>:<div className="text-center"> <H4>No payments found</H4></div>}
+      <ToastContainer autoClose={2000} />
       <DeleteModel open={open} onYes={handleDelete} onNo={toggleDialog} onClose={toggleDialog}
       message="after deleting this payment  you won't see it again "/>
       

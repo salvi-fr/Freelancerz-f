@@ -8,6 +8,7 @@ import Stats from '@component/home/stats'
 import Subscribe from '@component/home/subscribe'
 import Testimonial from '@component/home/testimonial'
 import Partners from '@component/home/partners'
+import BecomeInstructor from  '@component/home/becomeInstructor'  
 const IndexPage = () => {
   return (
     <main>
@@ -18,6 +19,7 @@ const IndexPage = () => {
       <Stats />
       <Testimonial />
      <Partners />
+     <BecomeInstructor />
       <Subscribe />
     </main>
   );

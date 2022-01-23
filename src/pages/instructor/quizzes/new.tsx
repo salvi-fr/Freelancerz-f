@@ -25,6 +25,7 @@ import IconButton from "@component/buttons/IconButton";
 import Divider from "@component/Divider";
 import CheckBox from "@component/CheckBox";
 import Radio from "@component/radio/Radio";
+import { ToastContainer } from "react-toastify";
 
 const NewQuiz = () => {
     const router = useRouter();
@@ -307,7 +308,8 @@ const handleRemoveAnswer= async (index)=>{
         </Formik>
         <Divider bg="gray.300" m="0.5rem" />
         
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

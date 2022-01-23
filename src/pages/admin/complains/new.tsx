@@ -12,13 +12,11 @@ import { useDispatch } from 'react-redux'
 import {uploadImageFirebase, useSelector} from 'utils/utils'
 import React, { useState,useRef,useEffect } from "react";
 import * as yup from "yup";
-import firebaseStorage from "lib/firebaseCloudStorage";
 import Spinner from "@component/Spinner";
-
+import { ToastContainer } from "react-toastify";
   import {
     createComplain
   } from 'redux/actions/complain'
-  import DropZone from "@component/DropZone";
 import TextArea from "@component/textarea/TextArea";
 const NewComplain = () => {
     const router = useRouter();
@@ -148,7 +146,8 @@ useEffect(() => {
             </form>
           )}
         </Formik>
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

@@ -230,9 +230,14 @@ export const navbarNavigations = [
       iconName: "board",
     },
     {
-      href: "/admin/courses",
-      title: "Courses",
-      iconName: "box",
+      href: "/admin/quizzes",
+      title: "Quizzes",
+      iconName: "upload",
+    },
+    {
+      href: "/admin/lectures",
+      title: "Lectures",
+      iconName: "upload",
     },
     {
       href: "/admin/modules",
@@ -240,19 +245,13 @@ export const navbarNavigations = [
       iconName: "box",
     },
     {
-      href: "/admin/lectures",
-      title: "Lectures",
-      iconName: "upload",
+      href: "/admin/courses",
+      title: "Courses",
+      iconName: "box",
     },
-
     {
       href: "/admin/categories",
       title: "Categories",
-      iconName: "upload",
-    },
-    {
-      href: "/admin/quizzes",
-      title: "Quizzes",
       iconName: "upload",
     },
     {
@@ -280,11 +279,11 @@ export const navbarNavigations = [
       title: "Roles",
       iconName: "upload",
     },
-    {
-      href: "/admin/complains",
-      title: "Complains",
-      iconName: "box",
-    },
+    // {
+    //   href: "/admin/complains",
+    //   title: "Complains",
+    //   iconName: "box",
+    // },
     
     {
       href: "/admin/publications",

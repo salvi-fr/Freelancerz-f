@@ -12,47 +12,51 @@ import { useDispatch } from 'react-redux'
 import {uploadImageFirebase, useSelector} from 'utils/utils'
 import React, { useState,useRef,useEffect } from "react";
 import * as yup from "yup";
-import firebaseStorage from "lib/firebaseCloudStorage";
 import Spinner from "@component/Spinner";
 import TextArea from "@component/textarea/TextArea";
   import {
     createEvent
   } from 'redux/actions/event'
 import RichTextEditor from '@component/RichTextEditor/RichTextEditor'
-import DropZone from "@component/DropZone";
+import { toast, ToastContainer } from "react-toastify";
 const NewEvent = () => {
     const router = useRouter();
   const dispatch = useDispatch()
-
   const {error:eventError=null}= useSelector((state) => state.event)
-  const {createEventSuccess=false}= useSelector((state) => state.event)
-  const {createEventloading=false}= useSelector((state) => state.event)
   const [file,setFile]=useState(null)
   const [content, setContent] = useState(
     null
 )
-  const firstUpdate = useRef(true);
-  const [foundError,setFoundError]= useState(null)
-console.log(foundError)
-  useEffect(() => {
-    if(eventError && !firstUpdate.current){
-        setFoundError(eventError)
-      }
-  }, [eventError])
+const { createEventSuccess=false,  createEventFailed=false}= useSelector((state) => state.event)
+const [loading , setLoading]= useState(false)
 useEffect(() => {
-  if(createEventSuccess && !firstUpdate.current){
-    firstUpdate.current=true
-    if(router.query.redirect){
-      router.push(`/${router.query.redirect}`);
-    }else{
-      router.push("/admin/events");
-    }
-    
+  if( createEventFailed && loading){
+    toast.error(eventError, {
+      icon: "😨"
+    });
+    setLoading(false)  
+    router.reload()
   }
-}, [createEventSuccess])
+}, [ createEventFailed])
+useEffect(() => {
+if( createEventSuccess && loading){
+  toast.success("successfully updated", {
+    icon: "🚀",
+    position: "top-right",
+autoClose: 5000
+  });
+  setLoading(false)
+  if(router.query.redirect){
+    
+    router.push(`/${router.query.redirect}`);
+  }else{
+    router.push("/admin/events");
+  } 
+}
+}, [ createEventSuccess,loading])
 
   const handleFormSubmit = async (values) => {
-    firstUpdate.current=false
+    setLoading(true)
     if(file){
       const avatarUrl= await uploadImageFirebase(file,`Events`)
       values.avatar=avatarUrl
@@ -61,8 +65,8 @@ useEffect(() => {
       let v ={...values , content}
       await dispatch(createEvent(v))
     } catch (e) {
+      setLoading(false)
       console.log("got error", e)
-        setFoundError(e.message)
         
     }
   };
@@ -175,14 +179,15 @@ useEffect(() => {
                 </Grid>
               </Box>
 
-              <Button type="submit" variant="contained" color="primary" disabled= {!content || createEventloading}>
-              {createEventloading && <Spinner  />}
+              <Button type="submit" variant="contained" color="primary" disabled= {!content || loading}>
+              {loading && <Spinner  />}
                 Create Event
               </Button>
             </form>
           )}
         </Formik>
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

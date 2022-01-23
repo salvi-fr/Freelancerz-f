@@ -14,7 +14,7 @@ import React, { useState,useRef,useEffect } from "react";
 import * as yup from "yup";
 import Hidden from "@component/hidden/Hidden";
 import Icon from "@component/icon/Icon";
-
+import { ToastContainer } from "react-toastify";
   import {
     createArticle
   } from 'redux/actions/article'
@@ -204,7 +204,8 @@ useEffect(() => {
             </form>
           )}
         </Formik>
-      </Card1>
+       </Card1>
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };
