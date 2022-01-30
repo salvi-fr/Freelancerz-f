@@ -16,7 +16,7 @@ import * as yup from "yup";
     updatePayment,getPayment
   } from 'redux/actions/payment'
 import Spinner from "@component/Spinner";
-import { getOpenCourses } from "@redux/actions/course";
+import { getOpenCourses } from "@redux/actions/jobs";
 import { getUsers } from "@redux/actions/user";
 import { ICourse, IUser } from "types";
 import Select from "@component/Select";

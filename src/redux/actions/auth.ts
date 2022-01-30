@@ -34,14 +34,15 @@ export const Login=  (data:LoginType) => (dispatch) => {
     dispatch ({ type: LOGIN_AUTH_LOADING });
    
     axios.post('/api/auth/login',{...data}).then((res) => {
-        
+        console.log("response", res)
         dispatch({
             type: LOGIN_AUTH_SUCCESS,
-            payload: res.data.data,
+            payload: res,
         })
     }).catch(function (error) {
+        console.log("Error",error.response.data.error)
         dispatch ({ type: LOGIN_AUTH_FAILED, 
-            payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}  })
+            payload:{error:error?.response?.data?.error? error.response.data.error: "Error Accured with the request"}  })
       });
 }
 
@@ -54,12 +55,12 @@ export const RefreshToken = () => (dispatch) => {
         })
     }).catch(function (error) {
         console.log(error);
-        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        const er= error?.response?.data?.error? error.response.data.error: "Error Accured with the request";
         toast.error(er, {
             icon: "🚀"
           });
         dispatch ({ type: REFRESH_AUTH_FAILED, 
-            payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
+            payload:{error:error?.response?.data?.error? error.response.data.error: "Error Accured with the request"}})
       });
 }
 
@@ -72,12 +73,12 @@ export const Signup = (data:SignupType) => (dispatch) => {
         })
     }).catch(function (error) {
         console.log(error);
-        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        const er= error?.response?.data?.error? error.response.data.error: "Error Accured with the request";
         toast.error(er, {
             icon: "🚀"
           });
         dispatch ({ type: SIGNUP_AUTH_FAILED, 
-            payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"} })
+            payload:{error:error?.response?.data?.error? error.response.data.error: "Error Accured with the request"} })
       });
 }
 

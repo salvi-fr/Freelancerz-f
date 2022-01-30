@@ -20,7 +20,7 @@ import {
 
   import {
     getCourses
-  } from 'redux/actions/course'
+  } from '@redux/actions/jobs'
   import {
     getEvents
   } from 'redux/actions/event'

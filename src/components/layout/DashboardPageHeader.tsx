@@ -5,10 +5,9 @@ import FlexBox from "../FlexBox";
 import Icon from "../icon/Icon";
 import Sidenav from "../sidenav/Sidenav";
 import { H2 } from "../Typography";
-import DashboardNavigation from "./CustomerDashboardNavigation";
 import AdminDashboardNavigation from "./AdminDashboardNavigation";
-import StudentDashboardNavigation from "./StudentDashboardNavigation"
-import InstructorDashboardNavigation from "./InstructorDashboardNavigation";
+import DeveloperDashboardNavigation from "./DeveloperDashboardNavigation"
+import ClientDashboardNavigation from "./ClientDashboardNavigation";
 export interface DashboardPageHeaderProps {
   iconName?: string;
   title?: string;
@@ -41,8 +40,8 @@ const DashboardPageHeader: React.FC<DashboardPageHeaderProps> = ({
           <Sidenav position="left" handle={<Icon mx="1rem">menu</Icon>}>
             
           {from === "Admin" && <AdminDashboardNavigation />}
-          {from === "Student" && <StudentDashboardNavigation />}
-          {from === "Instructor" && <InstructorDashboardNavigation />}
+          {from === "Developer" && <DeveloperDashboardNavigation />}
+          {from === "Client" && <ClientDashboardNavigation />}
         </Sidenav>
         }
          </>

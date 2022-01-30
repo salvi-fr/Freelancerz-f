@@ -34,7 +34,7 @@ export const getUsers = () => (dispatch) => {
             payload: {users:res.data},
         })
     }).catch(function (error) {
-        dispatch ({ type: GET_USERS_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
+        dispatch ({ type: GET_USERS_FAILED,  payload:{error:error?.response?.data?.error? error.response.data.error: "Error Accured with the request"}})
       });
 }
 
@@ -47,11 +47,11 @@ export const getUser = (id:string) => (dispatch) => {
         })
     }).catch(function (error) {
           console.log(error);
-        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        const er= error?.response?.data?.error? error.response.data.error: "Error Accured with the request";
         toast.error(er, {
             icon: "🚀"
           });
-        dispatch ({ type: GET_USER_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
+        dispatch ({ type: GET_USER_FAILED,  payload:{error:error?.response?.data?.error? error.response.data.error: "Error Accured with the request"}})
       });
 }
 
@@ -64,11 +64,11 @@ export const getProfile = () => (dispatch) => {
         })
     }).catch(function (error) {
           console.log(error);
-        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        const er= error?.response?.data?.error? error.response.data.error: "Error Accured with the request";
         toast.error(er, {
             icon: "🚀"
           });
-        dispatch ({ type: GET_USER_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
+        dispatch ({ type: GET_USER_FAILED,  payload:{error:error?.response?.data?.error? error.response.data.error: "Error Accured with the request"}})
       });
 }
 export const getMe= () => (dispatch) => {
@@ -80,11 +80,11 @@ export const getMe= () => (dispatch) => {
         })
     }).catch(function (error) {
           console.log(error);
-        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        const er= error?.response?.data?.error? error.response.data.error: "Error Accured with the request";
         toast.error(er, {
             icon: "🚀"
           });
-        dispatch ({ type: GET_ME_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
+        dispatch ({ type: GET_ME_FAILED,  payload:{error:error?.response?.data?.error? error.response.data.error: "Error Accured with the request"}})
       });
 }
 
@@ -97,11 +97,11 @@ export const createUser= (data:IUserCreate) => (dispatch) => {
         })
     }).catch(function (error) {
           console.log(error);
-        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        const er= error?.response?.data?.error? error.response.data.error: "Error Accured with the request";
         toast.error(er, {
             icon: "🚀"
           });
-        dispatch ({ type: CREATE_USER_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
+        dispatch ({ type: CREATE_USER_FAILED,  payload:{error:error?.response?.data?.error? error.response.data.error: "Error Accured with the request"}})
       });
 }
 
@@ -114,11 +114,11 @@ export const updateUser = (id:string,data:IUserUpdate) => (dispatch) => {
         })
     }).catch(function (error) {
           console.log(error);
-        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        const er= error?.response?.data?.error? error.response.data.error: "Error Accured with the request";
         toast.error(er, {
             icon: "🚀"
           });
-        dispatch ({ type: UPDATE_USER_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
+        dispatch ({ type: UPDATE_USER_FAILED,  payload:{error:error?.response?.data?.error? error.response.data.error: "Error Accured with the request"}})
       });
 }
 
@@ -132,10 +132,10 @@ export const deleteUser = (id:string) => (dispatch) => {
         })
     }).catch(function (error) {
           console.log(error);
-        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        const er= error?.response?.data?.error? error.response.data.error: "Error Accured with the request";
         toast.error(er, {
             icon: "🚀"
           });
-        dispatch ({ type: DELETE_USER_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
+        dispatch ({ type: DELETE_USER_FAILED,  payload:{error:error?.response?.data?.error? error.response.data.error: "Error Accured with the request"}})
       });
 }

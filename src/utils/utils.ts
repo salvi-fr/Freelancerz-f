@@ -23,15 +23,13 @@ export const getTheme = (query: string, fallback?: string) =>
     return decodedToken.exp > currentTime
   }
   
-  export const setSession = async (accessToken: string | null, refreshToken: string | null) => {
-    if (accessToken && refreshToken) {
-      localStorage.setItem('refreshToken', refreshToken)
+  export const setSession = async (accessToken: string | null) => {
+    if (accessToken ) {
       axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`
       await localStorage.setItem('accessToken', accessToken)
     } else {
       localStorage.removeItem('accessToken')
       delete axios.defaults.headers.common.Authorization
-      await localStorage.removeItem('refreshToken')
     }
   }
 

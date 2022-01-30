@@ -18,21 +18,24 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => {
+    console.log(error.error)
     return Promise.reject(error);
   },
 );
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    console.log(response);
-    return response;
+    console.log("response",response);
+    return response.data;
   },
   (error) => {
+    console.log("just some random errors",error);
     if (typeof window !== "undefined") {
       if (error?.response?.status === 401) {
         localStorage.removeItem("accessToken");
-        window.location.href = "/refresh";
+        window.location.href = "/login";
       }
+      console.log("just some random errors",error);
       if (error?.response?.status === 403) {
         error:error.response.data.message="You are not authorized to perform this action"
       }

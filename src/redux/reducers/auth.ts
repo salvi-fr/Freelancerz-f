@@ -38,7 +38,7 @@ export type AuthStateType = {
     readonly signupAuthSuccess?: boolean,
     readonly signupAuthFailed?: boolean,
     readonly refreshToken?: string,
-    readonly accessToken?: string,
+    readonly token?: string,
     readonly error?: string,
     readonly profile?:any
 
@@ -63,7 +63,7 @@ export const authReducer: React.Reducer<AuthStateType, authActionType> = (
                 refreshAuthloading: false,
                 refreshAuthSuccess: true,
                 refreshToken: action.payload.refreshToken,
-                accessToken: action.payload.accessToken,
+                accessToken: action.payload.token,
             }
         }
         case REFRESH_AUTH_LOADING: {
@@ -83,13 +83,14 @@ export const authReducer: React.Reducer<AuthStateType, authActionType> = (
             }
         }
         case LOGIN_AUTH_SUCCESS: {
-            setSession(action.payload.accessToken ,action.payload.refreshToken)
+            setSession(action.payload.token )
+            console.log("action.payload.token",action.payload.token)
             return {
                 ...state,
                 loginAuthloading: false,
                 loginAuthSuccess: true,
-                refreshToken: action.payload.refreshToken,
-                accessToken: action.payload.accessToken,
+                refreshToken: action.payload.token,
+                accessToken: action.payload.token,
             }
         }
         case LOGIN_AUTH_LOADING: {
@@ -110,7 +111,6 @@ export const authReducer: React.Reducer<AuthStateType, authActionType> = (
             }
         }
         case SIGNUP_AUTH_SUCCESS: {
-            setSession(action.payload.accessToken ,action.payload.refreshToken)
             return {
                 ...state,
                 signupAuthloading: false,

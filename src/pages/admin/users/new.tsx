@@ -17,7 +17,7 @@ import Icon from "@component/icon/Icon";
 import { ToastContainer } from "react-toastify";
   import {
     createArticle
-  } from 'redux/actions/article'
+  } from '@redux/actions/application'
 
 const NewArticle = () => {
     const router = useRouter();

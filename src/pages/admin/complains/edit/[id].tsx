@@ -2,7 +2,7 @@ import Box from "@component/Box";
 import Button from "@component/buttons/Button";
 import { Card1 } from "@component/Card1";
 import Grid from "@component/grid/Grid";
-import AdminDashboardLayout from "@component/layout/AdminDashboardLayout";
+import DashboardLayout from "@component/layout/DashboardLayout";
 import DashboardPageHeader from "@component/layout/DashboardPageHeader";
 import TextField from "@component/text-field/TextField";
 import { Formik } from "formik";
@@ -184,6 +184,6 @@ description:  yup.string().nullable(),
 complain_avatar: yup.string().nullable()
 });
 
-EditComplain.layout = AdminDashboardLayout;
+EditComplain.layout = DashboardLayout;
 
 export default  EditComplain;

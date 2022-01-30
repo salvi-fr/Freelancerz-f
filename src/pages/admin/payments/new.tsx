@@ -16,7 +16,7 @@ import {useSelector} from '@utils/utils'
     createPayment
   } from 'redux/actions/payment'
   import { ToastContainer, toast } from 'react-toastify';
-  import {getOpenCourses} from '@redux/actions/course'
+  import {getOpenCourses} from '@redux/actions/jobs'
   import {getUsers} from '@redux/actions/user'
 
 import Select from "@component/Select";

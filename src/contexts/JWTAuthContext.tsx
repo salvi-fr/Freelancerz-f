@@ -22,15 +22,14 @@ const isValidToken = (accessToken:string) => {
     return decodedToken.exp > currentTime
 }
 
-export const setSession = (accessToken:string|null,refreshToken:string|null) => {
-    if (accessToken && refreshToken) {
-        localStorage.setItem('refreshToken', refreshToken)
+export const setSession = (accessToken:string|null) => {
+    console.log("set session",accessToken)
+    if (accessToken ) {
         axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`
         localStorage.setItem('accessToken', accessToken)
     } else {
         localStorage.removeItem('accessToken')
         delete axios.defaults.headers.common.Authorization
-        localStorage.removeItem('refreshToken')
     }
 }
 
@@ -95,9 +94,9 @@ export const AuthProvider = ({ children }) => {
             password,
         })
         console.log(response)
-        const { accessToken, refreshToken } = response.data
+        const { token} = response.data
 
-        setSession(accessToken,refreshToken)
+        setSession(token)
 
         dispatch({
             type: 'LOGIN',
@@ -127,7 +126,7 @@ console.log(response)
     }
 
     const logout = () => {
-        setSession(null,null)
+        setSession(null)
         dispatch({ type: 'LOGOUT' })
     }
 
@@ -136,9 +135,8 @@ console.log(response)
             try {
                 console.log("in context api")
                 const access = window.localStorage.getItem('accessToken')
-                const refresh = window.localStorage.getItem('refreshToken')
                 if (access && isValidToken(access)) {
-                    setSession(access,null)
+                    setSession(access)
                     const response = await axios.get('/api/user/me')
                     const user = response.data
 
@@ -147,20 +145,6 @@ console.log(response)
                         payload: {
                             isAuthenticated: true,
                             user,
-                        },
-                    })
-                } else if(refresh && isValidToken(refresh)) {
-                    axios.defaults.headers.common.Authorization = `Bearer ${refresh}`
-                    const res = await axios.get('/api/auth/refresh')
-                    const { accessToken, refreshToken } = res.data
-                    setSession(accessToken,refreshToken)
-                    const response = await axios.get('/api/user/me')
-                    const user = response.data
-                    dispatch({
-                        type: 'INIT',
-                        payload: {
-                            isAuthenticated: true,
-                            user: user,
                         },
                     })
                 }

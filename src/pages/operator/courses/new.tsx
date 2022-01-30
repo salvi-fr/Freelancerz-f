@@ -16,7 +16,7 @@ import * as yup from "yup";
 import Spinner from "@component/Spinner";
 import {
   createCourse
-} from 'redux/actions/course'
+} from '@redux/actions/jobs'
 import {
   getCategories
 } from 'redux/actions/categories'

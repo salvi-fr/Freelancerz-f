@@ -32,19 +32,19 @@ const Welcome: React.FC<WelcomeProps> = () => {
   return (
     // <Container>
       <StyledCard
-        imgUrl="/assets/health/home/activities.jpg"
+        imgUrl="/assets/images/remote1.jpeg"
         mb="3.75rem"
         pt="3.75rem"
         
         hoverEffect
       >
         <Box maxWidth="100%">
-        <h1 className="title">Learn at your Schedule</h1>
+        <h1 className="title">The World&apos;s Work Marketplace for Freelancing</h1>
           <Typography  mb="1.35rem" color="text.muted" display="block">
-          Study any topic, anytime. Choose from thousands of expert-led courses now.
+          Work Anytime Anywhere, for Anyone. Explore the world&apos;s marketplace at your own pace.
         </Typography>
 
-          <Link href="/dashboard">
+          <Link href="/me">
             <a>
             <Button
           className="button-link"

@@ -8,7 +8,7 @@ import {useSelector} from 'utils/utils'
 import React, { useState,useRef,useEffect } from "react";
 import {
     getArticle
-  } from '@redux/actions/article'
+  } from '@redux/actions/application'
 import { SemiSpan } from "@component/Typography";
 
 const ArticleView = () => {

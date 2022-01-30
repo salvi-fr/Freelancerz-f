@@ -15,7 +15,7 @@ import * as yup from "yup";
 import RichTextEditor from '@component/RichTextEditor/RichTextEditor'
   import {
     updateArticle,getArticle
-  } from 'redux/actions/article'
+  } from '@redux/actions/application'
   import firebaseStorage from "lib/firebaseCloudStorage";
   import Spinner from "@component/Spinner";
   import DropZone from "@component/DropZone";

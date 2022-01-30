@@ -20,7 +20,7 @@ import TextArea from "@component/textarea/TextArea";
 import {getPromo} from 'redux/actions/promo'
 import {
   getCourses
-} from 'redux/actions/course'
+} from '@redux/actions/jobs'
 import {
   getEvents
 } from 'redux/actions/event'

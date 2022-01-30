@@ -4,25 +4,17 @@ const navbarNavigations = [
       url: "/"
     },
     {
-        title: "All Courses",
-        url: "/courses/all"
+        title: "Open Jobs",
+        url: "/jobs/all"
       },
       {
         title: "About Us",
         url: "/about"
       },
       {
-        title: "Gallery",
-        url: "/gallery"
-      },
-    {
-      title: "NRF",
-        url: "/nrf",
-    },
-    // {
-    //     title: "dashboard",
-    //       url: "/admin/dashboard",
-    //   }
+        title: "Contact Us",
+        url: "/contact"
+      }
     
   ];
   

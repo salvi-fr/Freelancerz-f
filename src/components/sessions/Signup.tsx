@@ -18,53 +18,36 @@ import { StyledSessionCard } from "./SessionStyle";
 import {
     Signup
 } from '../../redux/actions/auth'
-import {
-    getRoles
-} from '../../redux/actions/role'
-import Select from "@component/Select";
+import {roleCategories, stackCategories} from '@data/categories'
+import MultipleSelect from "@component/multipleSelect";
 interface SignupProps {
     role?: string
 }
 const SignupC: React.FC<SignupProps> = ({ role }) => {
     const router = useRouter();
     const dispatch = useDispatch()
-    const { roles = null } = useSelector((state) => state.role)
     const [passwordVisibility, setPasswordVisibility] = useState(false);
     const { signupAuthSuccess = false } = useSelector((state) => state.auth)
     const { error: authError = null } = useSelector((state) => state.auth)
-    const firstUpdate = useRef(true);
+    const[loading,setLoading] = useState(false)
     const [foundError, setFoundError] = useState(null)
-    const [roleCategories, setRoleCategories] = useState([])
 
     const togglePasswordVisibility = () => {
         setPasswordVisibility((visible) => !visible);
     };
 
     useEffect(() => {
-        if (firstUpdate.current) {
-            dispatch(getRoles())
-            firstUpdate.current = false
-        }
-        if (authError && !firstUpdate.current) {
+        setLoading(false)
+        if (authError && loading) {
             setFoundError(authError)
         }
+        
 
     }, [authError])
+    
     useEffect(() => {
-        if (roles.data) {
-            setRoleCategories([])
-            roles.data.map((item) => {
-                if (item.name != "admin" && item.name != "operator" && item.name != "user") {
-                    setRoleCategories((prevState) => [...prevState, { value: item._id, label: item.name }]);
-                }
-
-            })
-
-        }
-
-    }, [roles])
-    useEffect(() => {
-        if (signupAuthSuccess) {
+        if (signupAuthSuccess && loading) {
+            setLoading(false)
             if (router.query.redirect) {
                 router.push(`/${router.query.redirect}`);
             } else {
@@ -76,13 +59,14 @@ const SignupC: React.FC<SignupProps> = ({ role }) => {
 
     const handleFormSubmit = async (values) => {
         try {
-            const { re_password, aggrement,degree,reguratory,proffession, ...rest } = values
-            rest.proffession= proffession.value ,
-            rest.degree= degree.value,
-            rest.reguratory= reguratory.value,
-            rest.role = roleCategories.find((item) => item.label == role).value,
+            setLoading(true)
+            const { re_password,stack,githubUsername, ...rest } = values
+            rest.stackId= stack? stack.map(item => item.value).toString():null,
+            rest.githubUsername = githubUsername? githubUsername.replace("@", ""):null,
+            rest.userTypeId = roleCategories.find((item) => item.label == role).value
                 await dispatch(Signup(rest))
         } catch (e) {
+            setLoading(false)
             console.log("got error", e)
             setFoundError(e.message)
 
@@ -145,14 +129,14 @@ const SignupC: React.FC<SignupProps> = ({ role }) => {
                 />
                 <TextField
                     mb="0.75rem"
-                    name="mobileNumber"
+                    name="phoneNumber"
                     label="Mobile Number"
                     placeholder="25078..."
                     fullwidth
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    value={values.mobileNumber || ""}
-                    errorText={touched.mobileNumber && errors.mobileNumber}
+                    value={values.phoneNumber || ""}
+                    errorText={touched.phoneNumber && errors.phoneNumber}
                 />
                 <TextField
                     mb="0.75rem"
@@ -166,36 +150,20 @@ const SignupC: React.FC<SignupProps> = ({ role }) => {
                     value={values.email || ""}
                     errorText={touched.email && errors.email}
                 />
-                <Select
-                    label="Degree (required)"
-                    placeholder="Select Degree"
-                    options={degreeCategories}
-                    value={values.degree || ""}
-                    onChange={(degree) => {
-                        setFieldValue("degree", degree);
-                    }}
-                    errorText={touched.degree && errors.degree}
+                <TextField
+                    mb="0.75rem"
+                    name="githubUsername"
+                    label="Github Username (Start with @)"
+                    placeholder="Adwards"
+                    fullwidth
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.githubUsername|| ""}
+                    errorText={touched.githubUsername && errors.githubUsername}
                 />
-                <Select
-                    label="proffession (required)"
-                    placeholder="Select Proffession"
-                    options={ProffesionCategories}
-                    value={values.proffession|| ""}
-                    onChange={(proffession) => {
-                        setFieldValue("proffession", proffession);
-                    }}
-                    errorText={touched.proffession && errors.proffession}
-                />
-                <Select
-                    label="Regulatory body (required)"
-                    placeholder="Select Regulatory body"
-                    options={partnerCategories}
-                    value={values.reguratory|| ""}
-                    onChange={(body) => {
-                        setFieldValue("reguratory", body);
-                    }}
-                    errorText={touched.reguratory && errors.reguratory}
-                />
+             
+                
+             
                 <TextField
                     mb="0.75rem"
                     name="password"
@@ -248,7 +216,17 @@ const SignupC: React.FC<SignupProps> = ({ role }) => {
                     value={values.re_password || ""}
                     errorText={touched.re_password && errors.re_password}
                 />
-
+    <MultipleSelect
+    mb="1rem"
+                      label="Stack"
+                      placeholder="Select Stacks"
+                      options={stackCategories}
+                      value={values.stack || ""}
+                      onChange={(s) => {
+                        setFieldValue("stack", s);
+                      }}
+                      errorText={touched.stack && errors.stack}
+                    />
                 <CheckBox
                     mb="1.75rem"
                     name="agreement"
@@ -273,6 +251,7 @@ const SignupC: React.FC<SignupProps> = ({ role }) => {
                     color="primary"
                     type="submit"
                     fullwidth
+                    disabled={loading}
                 >
                     Create Account
                 </Button>
@@ -312,9 +291,10 @@ const SignupC: React.FC<SignupProps> = ({ role }) => {
 };
 
 const initialValues = {
+	stack: null,
     firstName: "",
     lastName: "",
-    mobileNumber: "",
+    githubUsername: "",
     proffession: "",
     degree: "",
     reguratory: "",
@@ -326,13 +306,12 @@ const initialValues = {
 const passwordRegExp = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/
 
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+const githuUR=/\B@(?!.*(-){2,}.*)[a-z0-9](?:[a-z0-9-]{0,37}[a-z0-9])?\b/ig
 const formSchema = yup.object().shape({
+    githubUsername: yup.string().matches(githuUR, "Github username is not valid"),
     lastName: yup.string().required("${path} is required"),
-    mobileNumber: yup.string().matches(phoneRegExp, 'Phone number is not valid').required("${path} is required"),
-    role: yup.string().required("${path} is required"),
-    proffession: yup.string().required("${path} is required"),
-    degree: yup.string().required("${path} is required"),
-    reguratory: yup.string().required("${path} is required"),
+    phoneNumber: yup.string().matches(phoneRegExp, 'Phone number is not valid').required("${path} is required"),
+    stack: yup.array(),
     firstName: yup.string().required("${path} is required"),
     email: yup.string().email("invalid email").required("${path} is required"),
     password: yup.string().matches(passwordRegExp, 'weak password, it must contain special character , upper and lowercase , number and characters').
@@ -351,102 +330,6 @@ const formSchema = yup.object().shape({
         .required("You have to agree with our Terms and Conditions!"),
 });
 
-const degreeCategories = [
-    {
-        label: "Bachelor",
-        value: "Bachelor"
-    },
-    {
-        label: "Master",
-        value: "Master"
-    },
-    {
-        label: "PhD",
-        value: "PhD"
-    },
-    {
-        label: "Other",
-        value: "Other"
-    },
-    {
-        label: "None",
-        value: null
-    },
-];
-const ProffesionCategories = [
-    {
-        label: "Pharmacy",
-        value: "Pharmacy"
-    },
-    {
-        label: "Ophtamologgy",
-        value: "Ophtamologgy"
-    },
-    {
-        label: "Midwife",
-        value: "Midwife"
-    },
-   
-    
-    {
-        label: "Nurse",
-        value: "Nurse"
-    },
-    {
-        label: "Other",
-        value: "Other"
-    },
-    {
-        label: "None",
-        value: null
-    }
-];
-const partnerCategories = [
-    {
-        value: "jica",
-        label: "jica",
-    },
-    {
-        value: "KISMITS",
-        label: "KISMITS"
-    },
-    {
-        value: "NCNM",
-        label: "NCNM"
-    },
-    {
-        value: "National Pharmacy council",
-        label: "National Pharmacy council",
-    },
-    {
-        value: "Rwanda medical and dental council",
-        label: "Rwanda medical and dental council",
-    },
-    {
-        value: "rahpc Rwanda allied healthprofessionals council",
-        label: "rahpc Rwanda allied healthprofessionals council",
-    },
-    {
-        value: "Westerwelle Start up Haus Kigali",
-        label: "Westerwelle Start up Haus Kigali",
-    },
-    {
-        value: "250 startup",
-        label: "250 startup",
-    },
-    {
-        value: "physto",
-        label: "physto",
-    },
-    {
-        value:"Other",
-        label:"Other"
-    },
-    {
-        value: "None",
-        label: null
-    }
 
-];
 
 export default SignupC;

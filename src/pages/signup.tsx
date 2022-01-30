@@ -16,7 +16,7 @@ const SignUpPage = () => {
       alignItems="center"
       justifyContent="center"
     >
-      <Signup role={"student"}/>
+      <Signup role={"Developer"}/>
     </FlexBox>
   );
 };

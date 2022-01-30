@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux'
 import {useSelector} from 'utils/utils'
 import {
   getArticles
-} from 'redux/actions/article'
+} from '@redux/actions/application'
 const limit =8
 
 const ArticlesList = () => {

@@ -31,30 +31,21 @@ const Stats: React.FC = () => {
 
 const serviceList = [
   {
-    title: "Courses",
+    title: "Jobs",
     subtitle: "245",
-    iconName: "delivery-truck",
+    iconName: "shield",
   },
   {
-    title: "Students",
+    title: "Developers",
     subtitle: "56767",
-    iconName: "piggy-bank",
+    iconName: "user",
   },
+
   {
-    title: "Health Professionals enrolled",
-    subtitle: "12",
-    iconName: "alarm-clock",
-  },
-  {
-    title: "Articles",
+    title: "Clients",
     subtitle: "2455",
     iconName: "credit-card-2",
-  },
-  {
-    title: "Bundles",
-    subtitle: "23",
-    iconName: "smartphone",
-  },
+  }
 ];
 
 export default Stats;

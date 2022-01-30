@@ -22,6 +22,13 @@ export const CardWrapper = styled(Card)<WrapperProps>`
   }
 `;
 
+export const JobCardWrapper = styled(Card)<WrapperProps>`
+  .black-box {
+    // color: white;
+    height:350px;
+  }
+`;
+
 export const IntroWrapper = styled(Card)<WrapperProps>`
   .cover-image {
     background-image: linear-gradient(

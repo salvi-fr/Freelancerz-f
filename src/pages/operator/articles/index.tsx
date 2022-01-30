@@ -17,7 +17,7 @@ import { useDispatch } from 'react-redux'
 import { useSelector } from 'utils/utils'
 import {
   getArticles, deleteArticle
-} from 'redux/actions/article'
+} from '@redux/actions/application'
 import { useRouter } from "next/router";
 import DeleteModel from "@component/modal/DeleteModel";
 const limit = 10

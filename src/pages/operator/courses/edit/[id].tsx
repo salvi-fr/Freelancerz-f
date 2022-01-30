@@ -15,7 +15,7 @@ import * as yup from "yup";
 
   import {
     updateCourse,getCourse
-  } from 'redux/actions/course'
+  } from '@redux/actions/jobs'
   import Select from "@component/Select";
 import MultipleSelect from '@component/multipleSelect';
 import RichTextEditor from '@component/RichTextEditor/RichTextEditor'

@@ -53,18 +53,18 @@ const Service: React.FC = () => {
 const serviceList = [
   {
     iconName: "categories",
-    title: "Trusted Courses",
-    description:'Our Courses are delivered trusted instructors, they are prepared by those Experienced and licensed Health Professionals.'
+    title: "Hire top developers",
+    description:'Hire any developer on our platform by just one click. Explore brilliant developers profiles and hire them to work on your projects.'
   },
   {
     iconName: "credit",
-    title: "Tools For Professionals",
-    description:'With the current platform, we provide you with accredited contents to healthcare Professionals in general.'
+    title: "Get hired as a developer ",
+    description:'Get hired as a developer on our platform by just one click. Explore jobs on our platform and put your skills to work.'
   },
   {
     iconName: "shield",
-    title: "Our Certificates",
-    description:'Our web application delivers certificates of completion to successful applicants who score 80% and above in evaluation from different.'
+    title: "Brilliant is evenly distributed",
+    description:'Brilliant is evenly distributed across the globe. We have a large network of developers and designers who are ready to work on your project.'
   },
 ];
 

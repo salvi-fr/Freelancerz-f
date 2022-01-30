@@ -18,11 +18,11 @@ export const getStats = () => (dispatch) => {
         })
     }).catch(function (error) {
         console.log(error);
-        const er= error?.response?.data?.message? error.response.data.message: "Error Accured with the request";
+        const er= error?.response?.data?.error? error.response.data.error: "Error Accured with the request";
         toast.error(er, {
             icon: "🚀"
           });
-        dispatch ({ type: GET_STATS_FAILED,  payload:{error:error?.response?.data?.message? error.response.data.message: "Error Accured with the request"}})
+        dispatch ({ type: GET_STATS_FAILED,  payload:{error:error?.response?.data?.error? error.response.data.error: "Error Accured with the request"}})
       });
 }
 
