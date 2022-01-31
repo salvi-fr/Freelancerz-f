@@ -14,14 +14,15 @@ import Icon from "@component/icon/Icon";
 import { H3,H5, SemiSpan, Small } from "@component/Typography";
 import { Chip } from "@component/Chip";
 import { useAppContext } from "@context/app/AppContext";
-import { createApplication ,getApplications} from "@redux/actions/application";
+import { approveApplication ,getApplications} from "@redux/actions/application";
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'utils/utils'
 import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/router";
 import {
-  updateJob,getJob
+getJob
 } from '@redux/actions/jobs'
+import TableRow from "@component/TableRow";
 
 const ViewJob = () => {
   const router = useRouter();
@@ -35,13 +36,14 @@ const ViewJob = () => {
   const {error:jobError=null}= useSelector((state) => state.job)
   const {job:fechedJob=null}= useSelector((state) => state.job)
   const [jobMock, setJobMock]=useState(null)
-  const { applications = null, error: applicationError = null,createApplicationFailed,createApplicationSuccess } 
+  const { applications = null, error: applicationError = null,updateApplicationFailed,updateApplicationSuccess } 
   = useSelector((state) => state.application)
   const { state:{auth:{isAuthenticated,user}} } = useAppContext();
   const [loading,setLoading]= useState(false)
   const [applicationData,setApplictationData]=useState([])
     let avatar= "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
 let canUserApply=isAuthenticated && user.userTypeId===1
+const [appId, setId]=useState()
 
 useEffect(() => {
   console.log(user)
@@ -50,18 +52,18 @@ useEffect(() => {
 }, [dispatch])
 
 useEffect(() => {
-  if(createApplicationFailed && loading){
+  if(updateApplicationFailed && loading){
     toast.error(applicationError, {
       icon: "😨"
     });
     setLoading(false)  
     // router.reload()
   }
-}, [createApplicationFailed])
+}, [updateApplicationFailed])
 
 
   useEffect(() => {
-    if(createApplicationSuccess && loading){
+    if(updateApplicationSuccess && loading){
       toast.success("successfully updated", {
         icon: "🚀",
         position: "top-right",
@@ -76,7 +78,7 @@ useEffect(() => {
       }
       
     }
-  }, [createApplicationSuccess,loading])
+  }, [updateApplicationSuccess,loading])
 
   useEffect(() => {
     if (applications && applications.data && applications.data.length) {
@@ -86,10 +88,11 @@ useEffect(() => {
 
  
 
-const HandleApply=()=>{
+const HandleApprove=(appid:string)=>{
   try{
     setLoading(true)
-    dispatch(createApplication({id:id as string}))
+    console.log(appid)
+    dispatch(approveApplication( appid as string))
   }catch(e){
     console.log(e)
     setLoading(false)
@@ -189,32 +192,7 @@ const HandleApply=()=>{
 
 
             </Box>
-
-           {canUserApply&& 
-           <Button variant="outlined" color="primary" my="12px"
-           onClick={HandleApply} disabled={loading}
-         >
-           Apply
-           </Button>
-           }
-
-           {!isAuthenticated&&
-            <Button variant="outlined" color="primary" my="12px"
-            // ref={`/me`}
-          >
-            Login to Apply
-            </Button>
-            }
-            {isAuthenticated && !canUserApply &&
-             <Button variant="outlined" color="primary" my="12px" disabled
-             
-           >
-             Only developer can apply
-             </Button>
-            }
               
-           
-
           </FlexBox>
 }
 {applicationData && 
@@ -224,7 +202,7 @@ const HandleApply=()=>{
         </H5>
   {applicationData.map((item, ind) => (
     <FlexBox mb="30px" key={ind}>
-      <Avatar src={item.imgUrl} mr="1rem" />
+      <Avatar src={avatar} mr="1rem" />
       <Box>
         <H5 fontWeight="600" mt="0px" mb="0px">
           {item.users.firstName}
@@ -232,10 +210,49 @@ const HandleApply=()=>{
         <SemiSpan>
           {format(new Date(item.createdAt), "hh:mm:a | dd MMM yyyy")}
         </SemiSpan>
-        <Box borderRadius="10px" bg="gray.200" p="1rem" mt="1rem">
-          {item.text}
+        <Box borderRadius="10px" bg="gray.200"  mt="1rem">
+        <TableRow p="0.75rem 1.5rem">
+        <FlexBox flexDirection="column" p="0.5rem">
+          <Small color="text.muted" mb="4px" textAlign="left">
+          Recommendation
+          </Small>
+          <span>{item.recommendation}</span>
+        </FlexBox>
+
+        <FlexBox flexDirection="column" p="0.5rem">
+          <Small color="text.muted" mb="4px" textAlign="left">
+            Status
+          </Small>
+          <span>{item.status}</span>
+        </FlexBox>
+        <FlexBox flexDirection="column" p="0.5rem">
+          <Small color="text.muted" mb="4px" textAlign="left">
+            Github
+          </Small>
+          <span>{item.users.githubUsername}</span>
+        </FlexBox>
+        <FlexBox flexDirection="column" p="0.5rem">
+          <Small color="text.muted" mb="4px" textAlign="left">
+            LinkedIn
+          </Small>
+          <span>{item.users.linkedIn}</span>
+        </FlexBox>
+        
+       
+      </TableRow>
         </Box>
+        <Button variant="outlined" color="primary" my="12px"
+          
+           onClick={() => {
+            setId(item.id)
+            HandleApprove(item.id)
+          }}
+          disabled={loading}
+         >
+           {item.status=="pending"? "approve": "Reject"}
+           </Button>
       </Box>
+      
     </FlexBox>
   ))}
   </div>
@@ -264,29 +281,6 @@ const HandleApply=()=>{
   );
 };
 
-const messageList = [
-  {
-    imgUrl: "/assets/images/faces/face-7.jpg",
-    name: "Esther Howard",
-    date: "2020-12-14T08:39:58.219Z",
-    text:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ipsum velit amet, aliquam massa tellus. Condimentum sit at pharetra, congue. Sit mattis amet nec pharetra odio. Interdum lorem vestibulum et amet et duis placerat. Ac mattis massa duis mi tellus sed. Mus eget in fames urna, ornare nunc, tincidunt tincidunt interdum. Amet aliquet pharetra rhoncus scelerisque pulvinar dictumst at sit. Neque tempor tellus ac nullam. Etiam massa tempor eu risus fusce aliquam.",
-  },
-  {
-    imgUrl: "/assets/images/faces/10.jpg",
-    name: "Ralph Edwards",
-    date: "2021-01-05T05:39:58.219Z",
-    text:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ipsum velit amet, aliquam massa tellus. Condimentum sit at pharetra, congue. Sit mattis amet nec pharetra odio. Interdum lorem vestibulum et amet et duis placerat.",
-  },
-  {
-    imgUrl: "/assets/images/faces/face-7.jpg",
-    name: "Esther Howard",
-    date: "2021-01-14T08:39:58.219Z",
-    text:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nunc, lectus mi ornare. Bibendum proin euismod nibh tellus, phasellus.",
-  },
-];
 
 ViewJob.layout = DashboardLayout;
 

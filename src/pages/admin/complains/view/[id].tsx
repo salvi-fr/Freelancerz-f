@@ -3,7 +3,7 @@ import Box from "@component/Box";
 import Button from "@component/buttons/Button";
 import Divider from "@component/Divider";
 import FlexBox from "@component/FlexBox";
-import DashboardLayout from "@component/layout/CustomerDashboardLayout";
+import AdminDashboardLayout from "@component/layout/CustomerAdminDashboardLayout";
 import DashboardPageHeader from "@component/layout/DashboardPageHeader";
 import TextArea from "@component/textarea/TextArea";
 import { H5, SemiSpan } from "@component/Typography";
@@ -94,6 +94,6 @@ const messageList = [
   },
 ];
 
-PaymentMethodEditor.layout = DashboardLayout;
+PaymentMethodEditor.layout = AdminDashboardLayout;
 
 export default PaymentMethodEditor;

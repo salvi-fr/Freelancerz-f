@@ -118,7 +118,7 @@ export const approveApplication = (id:string) => (dispatch) => {
             payload: {application:res.data.data},
         })
     }).catch(function (error) {
-        console.log(error);
+        console.log(error.response);
         const er= error?.response?.data?.error? error.response.data.error: "Error Accured with the request";
         toast.error(er, {
             icon: "🚀"

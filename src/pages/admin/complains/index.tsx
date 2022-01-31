@@ -3,7 +3,7 @@ import { Chip } from "@component/Chip";
 import FlexBox from "@component/FlexBox";
 import Hidden from "@component/hidden/Hidden";
 import Icon from "@component/icon/Icon";
-import DashboardLayout from "@component/layout/DashboardLayout";
+import AdminDashboardLayout from "@component/layout/AdminDashboardLayout";
 import DashboardPageHeader from "@component/layout/DashboardPageHeader";
 import Pagination from "@component/pagination/Pagination";
 import TableRow from "@component/TableRow";
@@ -181,6 +181,6 @@ useEffect(() => {
   );
 };
 
-ComplainsList.layout = DashboardLayout;
+ComplainsList.layout = AdminDashboardLayout;
 
 export default ComplainsList;
